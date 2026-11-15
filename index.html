@@ -8,18 +8,18 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div id="float-runes" aria-hidden="true"></div>
 <nav>
-  <a class="brand" href="#top">ᚱ smallrug2</a>
+  <button class="brand nav-btn active" data-view-target="home" type="button">ᚱ smallrug2</button>
   <div class="nav-links">
-    <a href="#about">About</a>
-    <a href="#runes">Runes</a>
-    <a href="#code">Code</a>
-    <a href="#projects">Projects</a>
-    <a href="#links">Links</a>
+    <button class="nav-btn" data-view-target="runes" type="button">Runes</button>
+    <button class="nav-btn" data-view-target="code" type="button">Code</button>
+    <button class="nav-btn" data-view-target="projects" type="button">Projects</button>
+    <button class="nav-btn" data-view-target="links" type="button">Links</button>
   </div>
 </nav>
 
-<header class="hero" id="top">
+<header class="hero view active" data-view="home" id="top">
   <img class="avatar" src="assets/witch-avatar.webp" alt="Pixel-art chibi witch with blonde braids, purple hat and robe, and a crescent staff">
   <p class="welcome">Welcome to my corner of the internet — runes, code, and a little magic. ✦</p>
   <h1>Connie</h1>
@@ -29,7 +29,7 @@
 </header>
 
 <main>
-<section id="about">
+<section id="about" class="view active" data-view="home">
   <h2>ᚨ About</h2>
   <div class="bio-card">
     <h3>My VRChat bio</h3>
@@ -55,7 +55,7 @@
   and detail cars as Connie's Customs.</p>
 </section>
 
-<section id="runes">
+<section id="runes" class="view" data-view="runes">
   <h2>ᚱ Runes — Elder Futhark</h2>
   <p>I write in Elder Futhark every day. Here is the full alphabet, the rune of the current hour,
   a converter so you can write in runes too, and a rune cast. The rune-hours idea was inspired by
@@ -98,7 +98,7 @@
   </div>
 </section>
 
-<section id="code">
+<section id="code" class="view" data-view="code">
   <h2>ᚲ Code</h2>
   <p>My favourite languages are HTML, CSS, C++, Python, and Java. This site itself is built with
   HTML, CSS, and JavaScript — and the same rune converter below is written three more ways,
@@ -229,7 +229,7 @@ public class RuneConverter {
   <a href="code/RuneConverter.java">RuneConverter.java</a>.</p>
 </section>
 
-<section id="projects">
+<section id="projects" class="view" data-view="projects">
   <h2>ᛟ Projects</h2>
   <div class="cards">
     <article class="card">
@@ -238,34 +238,16 @@ public class RuneConverter {
       <code>sys_snapshot</code>, plus <code>dup-find</code> and <code>pass-gen</code> (MIT).</p>
       <a href="https://github.com/smallrug2">github.com/smallrug2</a>
     </article>
-    <article class="card">
-      <h3>Herobrine Invasion Pack</h3>
-      <p>My Minecraft 1.20.1 Forge modpack — horror, bosses, and a crawling dimension,
-      tuned for performance.</p>
-    </article>
-    <article class="card">
-      <h3>Simpletech</h3>
-      <p>Local computer repair, PC builds, and home Wi-Fi / network setup.</p>
-    </article>
-    <article class="card">
-      <h3>Lobby Sentinels</h3>
-      <p>My VRChat group keeping lobbies safe — 18+, evidence-based reporting, with an 18+ bar.</p>
-    </article>
-    <article class="card">
-      <h3>Rainbow Library</h3>
-      <p>Where I write runes and help keep the community's TV PG-13. Home of my Viking poems.</p>
-    </article>
   </div>
 </section>
 
-<section id="links">
+<section id="links" class="view" data-view="links">
   <h2>ᛚ Links</h2>
   <ul class="link-list">
     <li><a href="https://github.com/smallrug2">GitHub — smallrug2</a></li>
     <li><a href="https://www.youtube.com/@smallrug2">YouTube — @smallrug2</a></li>
     <li><a href="https://www.tiktok.com/@smallrug">TikTok — smallrug</a></li>
     <li><a href="https://www.twitch.tv/swordkiller908">Twitch — swordkiller908</a></li>
-    <li><a href="https://x.com/ParsecDeniers02">X — @ParsecDeniers02</a></li>
     <li><a href="https://www.instagram.com/smallrug2">Instagram — smallrug2</a></li>
   </ul>
 </section>

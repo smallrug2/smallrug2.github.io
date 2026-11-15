@@ -107,16 +107,26 @@ document.getElementById("copy-runes").addEventListener("click", async () => {
 });
 
 // ---- Cast a rune ----
-document.getElementById("cast-btn").addEventListener("click", () => {
-  const r = RUNES[Math.floor(Math.random() * RUNES.length)];
-  const box = document.getElementById("cast-result");
-  box.textContent = "";
+const castBtn = document.getElementById("cast-btn");
+const castBox = document.getElementById("cast-result");
+castBtn.addEventListener("click", () => {
+  castBtn.disabled = true;
+  castBox.textContent = "";
   const glyph = document.createElement("span");
   glyph.className = "glyph";
-  glyph.textContent = r.glyph;
-  const name = document.createElement("strong");
-  name.textContent = " " + r.name + " ";
-  box.append(glyph, name, document.createTextNode("— " + r.meaning + "."));
+  castBox.appendChild(glyph);
+  const shuffle = setInterval(() => {
+    glyph.textContent = RUNES[Math.floor(Math.random() * RUNES.length)].glyph;
+  }, 70);
+  setTimeout(() => {
+    clearInterval(shuffle);
+    const r = RUNES[Math.floor(Math.random() * RUNES.length)];
+    glyph.textContent = r.glyph;
+    const name = document.createElement("strong");
+    name.textContent = " " + r.name + " ";
+    castBox.append(name, document.createTextNode("— " + r.meaning + "."));
+    castBtn.disabled = false;
+  }, 700);
 });
 
 // ---- Code tabs ----
@@ -165,3 +175,31 @@ rGlyph.textContent = reflectionRune.glyph;
 const rName = document.createElement("strong");
 rName.textContent = " " + reflectionRune.name + ": ";
 reflectionBox.append(rGlyph, rName, document.createTextNode(REFLECTIONS[dayOfYear % RUNES.length]));
+
+// ---- Separate views (one section at a time, like the rune-hours site) ----
+const panels = document.querySelectorAll("[data-view]");
+const navBtns = document.querySelectorAll(".nav-btn");
+function showView(name) {
+  panels.forEach((p) => p.classList.toggle("active", p.dataset.view === name));
+  navBtns.forEach((b) => b.classList.toggle("active", b.dataset.viewTarget === name));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+navBtns.forEach((b) => b.addEventListener("click", () => showView(b.dataset.viewTarget)));
+if (location.hash) {
+  const wanted = location.hash.slice(1);
+  if (document.querySelector('[data-view="' + wanted + '"]')) showView(wanted);
+}
+
+// ---- Floating background runes ----
+const floatBox = document.getElementById("float-runes");
+const GLYPHS = RUNES.map((r) => r.glyph);
+for (let i = 0; i < 14; i++) {
+  const s = document.createElement("span");
+  s.className = "float-rune";
+  s.textContent = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+  s.style.left = Math.random() * 96 + "vw";
+  s.style.fontSize = 1.2 + Math.random() * 2.2 + "rem";
+  s.style.animationDuration = 18 + Math.random() * 22 + "s";
+  s.style.animationDelay = -Math.random() * 30 + "s";
+  floatBox.appendChild(s);
+}

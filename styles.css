@@ -225,3 +225,78 @@ footer {
   padding: 1rem 1.3rem;
 }
 .bookshelf p { margin: 0.5rem 0; }
+
+/* ---- Advanced design: separate views + animations ---- */
+.view { display: none; }
+.view.active { display: block; animation: viewIn 0.45s ease both; }
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+h1, h2, h3 { font-family: Georgia, "Palatino Linotype", "Book Antiqua", serif; letter-spacing: 0.02em; }
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: var(--purple-light);
+  font: inherit;
+  cursor: pointer;
+  padding: 0.2rem 0;
+  margin-top: 0;
+}
+.nav-btn:hover { color: #fff; }
+.nav-btn.active { color: var(--gold); }
+.nav-links .nav-btn { margin-left: 1.1rem; }
+nav .brand.nav-btn { color: var(--ink); }
+
+.avatar { animation: floaty 5s ease-in-out infinite, glowPulse 5s ease-in-out infinite; }
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 24px rgba(139, 92, 246, 0.45); }
+  50% { box-shadow: 0 0 42px rgba(139, 92, 246, 0.75); }
+}
+
+.rune-strip { animation: shimmer 6s ease-in-out infinite; }
+@keyframes shimmer {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+.rune-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.rune-card:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 8px 24px rgba(139, 92, 246, 0.35); }
+.view.active .rune-card { animation: cardIn 0.5s ease both; }
+.view.active .rune-card:nth-child(3n+2) { animation-delay: 0.08s; }
+.view.active .rune-card:nth-child(3n) { animation-delay: 0.16s; }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+#float-runes { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.float-rune {
+  position: absolute;
+  bottom: -3rem;
+  color: rgba(201, 167, 255, 0.22);
+  animation: drift linear infinite;
+}
+@keyframes drift {
+  from { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  to { transform: translateY(-110vh) rotate(24deg); opacity: 0; }
+}
+nav, header, main, footer { position: relative; z-index: 1; }
+
+button:disabled { opacity: 0.6; cursor: wait; }
+
+@media (max-width: 560px) {
+  .nav-links .nav-btn { margin-left: 0.7rem; font-size: 0.92rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
