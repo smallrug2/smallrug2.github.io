@@ -28,13 +28,23 @@ const RUNES = [
 ];
 
 // ---- Dictionary grid ----
+// Cards are built with textContent only — no page HTML is ever assembled
+// from strings, so nothing typed or loaded can inject markup.
 const grid = document.getElementById("rune-grid");
 for (const r of RUNES) {
   const card = document.createElement("article");
   card.className = "rune-card";
-  card.innerHTML =
-    '<span class="glyph">' + r.glyph + "</span><h4>" + r.name + "</h4>" +
-    '<p class="sound">' + r.sound + " · " + r.aett + "</p><p>" + r.meaning + "</p>";
+  const glyph = document.createElement("span");
+  glyph.className = "glyph";
+  glyph.textContent = r.glyph;
+  const name = document.createElement("h4");
+  name.textContent = r.name;
+  const sound = document.createElement("p");
+  sound.className = "sound";
+  sound.textContent = r.sound + " · " + r.aett;
+  const meaning = document.createElement("p");
+  meaning.textContent = r.meaning;
+  card.append(glyph, name, sound, meaning);
   grid.appendChild(card);
 }
 
@@ -42,17 +52,31 @@ for (const r of RUNES) {
 const now = new Date();
 const hour = now.getHours();
 const hourRune = RUNES[hour];
-document.getElementById("hour-rune").innerHTML =
-  'Right now, hour ' + hour + ':00 belongs to <span class="glyph">' + hourRune.glyph + "</span> " +
-  "<strong>" + hourRune.name + "</strong> — " + hourRune.meaning + ".";
+const hourBox = document.getElementById("hour-rune");
+hourBox.textContent = "Right now, hour " + hour + ":00 belongs to ";
+const hourGlyph = document.createElement("span");
+hourGlyph.className = "glyph";
+hourGlyph.textContent = hourRune.glyph;
+const hourName = document.createElement("strong");
+hourName.textContent = " " + hourRune.name + " ";
+hourBox.append(hourGlyph, hourName, document.createTextNode("— " + hourRune.meaning + "."));
 
 const tbody = document.querySelector("#hour-table tbody");
 RUNES.forEach((r, i) => {
   const tr = document.createElement("tr");
   if (i === hour) tr.className = "now";
-  tr.innerHTML =
-    "<td>" + String(i).padStart(2, "0") + ":00</td>" +
-    '<td class="glyph">' + r.glyph + "</td><td>" + r.name + "</td><td>" + r.meaning + "</td>";
+  const cells = [
+    String(i).padStart(2, "0") + ":00",
+    r.glyph,
+    r.name,
+    r.meaning,
+  ];
+  cells.forEach((text, j) => {
+    const td = document.createElement("td");
+    if (j === 1) td.className = "glyph";
+    td.textContent = text;
+    tr.appendChild(td);
+  });
   tbody.appendChild(tr);
 });
 
@@ -85,8 +109,14 @@ document.getElementById("copy-runes").addEventListener("click", async () => {
 // ---- Cast a rune ----
 document.getElementById("cast-btn").addEventListener("click", () => {
   const r = RUNES[Math.floor(Math.random() * RUNES.length)];
-  document.getElementById("cast-result").innerHTML =
-    '<span class="glyph">' + r.glyph + "</span> <strong>" + r.name + "</strong> — " + r.meaning + ".";
+  const box = document.getElementById("cast-result");
+  box.textContent = "";
+  const glyph = document.createElement("span");
+  glyph.className = "glyph";
+  glyph.textContent = r.glyph;
+  const name = document.createElement("strong");
+  name.textContent = " " + r.name + " ";
+  box.append(glyph, name, document.createTextNode("— " + r.meaning + "."));
 });
 
 // ---- Code tabs ----
@@ -98,3 +128,40 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
     document.getElementById("tab-" + btn.dataset.tab).classList.remove("hidden");
   });
 });
+
+// ---- Rune reflection of the day (original prompts, one per rune) ----
+const REFLECTIONS = [
+  "What wealth — time, skill, care — did you share today?",
+  "Where did you stand your ground when it would have been easier to fold?",
+  "What thorn is asking you to set a boundary?",
+  "What truth needs saying out loud?",
+  "What journey — outer or inner — are you actually on?",
+  "What did you finally see clearly?",
+  "What gift came with no strings, and what did you give back?",
+  "What small joy did you almost walk past?",
+  "What broke open that needed breaking?",
+  "What friction is teaching you patience?",
+  "Where is stillness the right move?",
+  "What did you plant that's finally coming up?",
+  "What are you enduring that is making you stronger?",
+  "What chance are you willing to take?",
+  "Where do you feel watched over?",
+  "What victory, however small, will you own today?",
+  "Where does fairness ask you to act?",
+  "What is quietly growing in you?",
+  "Who do you trust to ride beside you?",
+  "What do you owe the people around you?",
+  "Where should you stop forcing it and let it flow?",
+  "What seed are you keeping safe until its season?",
+  "What dawn is breaking in your life right now?",
+  "What inheritance — story, skill, place — will you carry forward?",
+];
+const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+const reflectionRune = RUNES[dayOfYear % RUNES.length];
+const reflectionBox = document.getElementById("reflection");
+const rGlyph = document.createElement("span");
+rGlyph.className = "glyph";
+rGlyph.textContent = reflectionRune.glyph;
+const rName = document.createElement("strong");
+rName.textContent = " " + reflectionRune.name + ": ";
+reflectionBox.append(rGlyph, rName, document.createTextNode(REFLECTIONS[dayOfYear % RUNES.length]));
