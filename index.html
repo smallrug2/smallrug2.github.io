@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>smallrug2 ✦ Connie — Witch, Rune Writer, White-Hat Hacker</title>
+<meta name="description" content="smallrug2 — Connie, a trans witch, Elder Futhark rune writer, ethical hacker and builder. Runes, code, projects and links.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav>
+  <a class="brand" href="#top">ᚱ smallrug2</a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#runes">Runes</a>
+    <a href="#code">Code</a>
+    <a href="#projects">Projects</a>
+    <a href="#links">Links</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <img class="avatar" src="assets/witch-avatar.webp" alt="Pixel-art chibi witch with blonde braids, purple hat and robe, and a crescent staff">
+  <h1>smallrug2</h1>
+  <p class="tagline">Connie · Trans Witch · Rune Writer · White-Hat Hacker</p>
+  <p class="status">“just a cute little witch”</p>
+  <p class="rune-strip" aria-hidden="true">ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ᚷ ᚹ ᚺ ᚾ ᛁ ᛃ ᛇ ᛈ ᛉ ᛊ ᛏ ᛒ ᛖ ᛗ ᛚ ᛜ ᛞ ᛟ</p>
+</header>
+
+<main>
+<section id="about">
+  <h2>ᚨ About</h2>
+  <div class="bio-card">
+    <h3>My VRChat bio</h3>
+    <p>Connie · 24 · 6'4" — Trans MTF, Pan, Autigender, Catgirl Therian, Amethyst Soul,
+    Witch, Pagan, Valkyrie, living with BPD &amp; Autism.</p>
+    <p>Tag: <strong>Trans Witch</strong> · Status: “just a cute little witch”</p>
+    <p>Banner: <strong>Connie's Customs</strong> — PC Builder &amp; Car Detailer</p>
+    <p>Rune Writer, photographer &amp; cuddlebug.</p>
+  </div>
+  <p>I'm a white-hat hacker and penetration tester with four to five years behind Kali tools,
+  deep into networks, network security, and Linux. I build things: 22 Python tools on GitHub,
+  Minecraft mods and modpacks, PCs, and home networks.</p>
+  <p>I'm a rune writer. I write natively in Elder Futhark, post the runic alphabet so others can
+  learn it, and teach anyone who asks. I learned through the Valhyr rune converter, and now the
+  runes are part of how I pray, write poetry, and see the world.</p>
+  <p>My path is Eclectic Norse Paganism: the Norse gods alongside Archangel Michael and the angels,
+  runes and galdr alongside modern witchcraft, personal sovereignty over mimicking the old customs.
+  My poems and prayers rhyme, and the long story-poems are the ones I love most.</p>
+  <p>When I'm not hacking or writing runes, I'm in VRChat, BeamNG, or Need for Speed Heat —
+  or under the hood of my 1997 Ford F-150, which I maintain myself.</p>
+</section>
+
+<section id="runes">
+  <h2>ᚱ Runes — Elder Futhark</h2>
+  <p>I write in Elder Futhark every day. Here is the full alphabet, the rune of the current hour,
+  a converter so you can write in runes too, and a rune cast. The rune-hours idea was inspired by
+  <a href="https://github.com/lytrawroper-lang/rune-hours">lytrawroper-lang's rune-hours</a> —
+  thank you for the spark. This version is my own build, with the dictionary order kept
+  consistent everywhere.</p>
+
+  <h3>The dictionary — all 24 runes</h3>
+  <div id="rune-grid" class="rune-grid"></div>
+
+  <h3>Rune of the hour</h3>
+  <div id="hour-rune" class="hour-rune"></div>
+  <div id="hour-table-wrap">
+    <table id="hour-table" class="hour-table">
+      <thead><tr><th>Hour</th><th>Rune</th><th>Name</th><th>Meaning</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <h3>Write in runes</h3>
+  <p>Type anything and watch it become runes. <code>th</code> becomes ᚦ, <code>ng</code> becomes ᛜ.</p>
+  <textarea id="rune-input" rows="3" placeholder="Type here… try your name"></textarea>
+  <div id="rune-output" class="rune-output" aria-live="polite"></div>
+  <button id="copy-runes" type="button">Copy runes</button>
+
+  <h3>Cast a rune</h3>
+  <p>One rune, drawn at random, with its meaning. Take from it what you will.</p>
+  <button id="cast-btn" type="button">ᚱ Cast a rune</button>
+  <div id="cast-result" class="cast-result" aria-live="polite"></div>
+</section>
+
+<section id="code">
+  <h2>ᚲ Code</h2>
+  <p>My favourite languages are HTML, CSS, C++, Python, and Java. This site itself is built with
+  HTML, CSS, and JavaScript — and the same rune converter below is written three more ways,
+  so you can see how I think in each language.</p>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="python" type="button">Python</button>
+    <button class="tab-btn" data-tab="cpp" type="button">C++</button>
+    <button class="tab-btn" data-tab="java" type="button">Java</button>
+    <button class="tab-btn" data-tab="html" type="button">HTML / CSS</button>
+  </div>
+  <pre class="code-block" id="tab-python"><code>RUNES = {
+    "th": "ᚦ", "ng": "ᛜ",
+    "a": "ᚨ", "b": "ᛒ", "c": "ᚲ", "d": "ᛞ", "e": "ᛖ",
+    "f": "ᚠ", "g": "ᚷ", "h": "ᚺ", "i": "ᛁ", "j": "ᛃ",
+    "k": "ᚲ", "l": "ᛚ", "m": "ᛗ", "n": "ᚾ", "o": "ᛟ",
+    "p": "ᛈ", "q": "ᚲ", "r": "ᚱ", "s": "ᛊ", "t": "ᛏ",
+    "u": "ᚢ", "v": "ᚹ", "w": "ᚹ", "x": "ᚲᛊ", "y": "ᛃ",
+    "z": "ᛉ",
+}
+
+def to_runes(text):
+    text = text.lower()
+    out, i = [], 0
+    while i &lt; len(text):
+        pair = text[i:i + 2]
+        if pair in RUNES:
+            out.append(RUNES[pair])
+            i += 2
+        else:
+            out.append(RUNES.get(text[i], text[i]))
+            i += 1
+    return "".join(out)
+
+if __name__ == "__main__":
+    print(to_runes("connie"))  # ᚲᛟᚾᚾᛁᛖ</code></pre>
+  <pre class="code-block hidden" id="tab-cpp"><code>#include &lt;iostream&gt;
+#include &lt;map&gt;
+#include &lt;string&gt;
+
+std::string toRunes(const std::string&amp; text) {
+    static const std::map&lt;std::string, std::string&gt; runes = {
+        {"th", "ᚦ"}, {"ng", "ᛜ"},
+        {"a", "ᚨ"}, {"b", "ᛒ"}, {"c", "ᚲ"}, {"d", "ᛞ"},
+        {"e", "ᛖ"}, {"f", "ᚠ"}, {"g", "ᚷ"}, {"h", "ᚺ"},
+        {"i", "ᛁ"}, {"j", "ᛃ"}, {"k", "ᚲ"}, {"l", "ᛚ"},
+        {"m", "ᛗ"}, {"n", "ᚾ"}, {"o", "ᛟ"}, {"p", "ᛈ"},
+        {"q", "ᚲ"}, {"r", "ᚱ"}, {"s", "ᛊ"}, {"t", "ᛏ"},
+        {"u", "ᚢ"}, {"v", "ᚹ"}, {"w", "ᚹ"}, {"x", "ᚲᛊ"},
+        {"y", "ᛃ"}, {"z", "ᛉ"},
+    };
+    std::string out;
+    for (size_t i = 0; i &lt; text.size();) {
+        std::string pair = text.substr(i, 2);
+        auto it = runes.find(pair);
+        if (it != runes.end()) { out += it-&gt;second; i += 2; continue; }
+        auto single = runes.find(text.substr(i, 1));
+        out += (single == runes.end()) ? text.substr(i, 1) : single-&gt;second;
+        i += 1;
+    }
+    return out;
+}
+
+int main() {
+    std::cout &lt;&lt; toRunes("connie") &lt;&lt; "\n";  // ᚲᛟᚾᚾᛁᛖ
+}</code></pre>
+  <pre class="code-block hidden" id="tab-java"><code>import java.util.LinkedHashMap;
+import java.util.Map;
+
+public class RuneConverter {
+    private static final Map&lt;String, String&gt; RUNES = new LinkedHashMap&lt;&gt;();
+    static {
+        RUNES.put("th", "ᚦ"); RUNES.put("ng", "ᛜ");
+        RUNES.put("a", "ᚨ"); RUNES.put("b", "ᛒ"); RUNES.put("c", "ᚲ");
+        RUNES.put("d", "ᛞ"); RUNES.put("e", "ᛖ"); RUNES.put("f", "ᚠ");
+        RUNES.put("g", "ᚷ"); RUNES.put("h", "ᚺ"); RUNES.put("i", "ᛁ");
+        RUNES.put("j", "ᛃ"); RUNES.put("k", "ᚲ"); RUNES.put("l", "ᛚ");
+        RUNES.put("m", "ᛗ"); RUNES.put("n", "ᚾ"); RUNES.put("o", "ᛟ");
+        RUNES.put("p", "ᛈ"); RUNES.put("q", "ᚲ"); RUNES.put("r", "ᚱ");
+        RUNES.put("s", "ᛊ"); RUNES.put("t", "ᛏ"); RUNES.put("u", "ᚢ");
+        RUNES.put("v", "ᚹ"); RUNES.put("w", "ᚹ"); RUNES.put("x", "ᚲᛊ");
+        RUNES.put("y", "ᛃ"); RUNES.put("z", "ᛉ");
+    }
+
+    public static String toRunes(String text) {
+        text = text.toLowerCase();
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i &lt; text.length();) {
+            String pair = text.substring(i, Math.min(i + 2, text.length()));
+            if (RUNES.containsKey(pair)) {
+                out.append(RUNES.get(pair));
+                i += 2;
+            } else {
+                String ch = text.substring(i, i + 1);
+                out.append(RUNES.getOrDefault(ch, ch));
+                i += 1;
+            }
+        }
+        return out.toString();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(toRunes("connie"));  // ᚲᛟᚾᚾᛁᛖ
+    }
+}</code></pre>
+  <pre class="code-block hidden" id="tab-html"><code>&lt;!-- a rune card, the same shape this page renders — --&gt;
+&lt;article class="rune-card"&gt;
+  &lt;span class="glyph"&gt;ᚠ&lt;/span&gt;
+  &lt;h4&gt;Fehu&lt;/h4&gt;
+  &lt;p class="sound"&gt;f · Freyr's aett&lt;/p&gt;
+  &lt;p&gt;wealth, abundance, new beginnings&lt;/p&gt;
+&lt;/article&gt;
+
+&lt;!-- styles.css — --&gt;
+.rune-card {
+  background: #1c1330;
+  border: 1px solid #6d4bb8;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+.rune-card .glyph {
+  font-size: 2.5rem;
+  color: #c9a7ff;
+}</code></pre>
+  <p>The full source files live in this repo under <code>code/</code>:
+  <a href="code/rune_converter.py">rune_converter.py</a>,
+  <a href="code/RuneCast.cpp">RuneCast.cpp</a>,
+  <a href="code/RuneConverter.java">RuneConverter.java</a>.</p>
+</section>
+
+<section id="projects">
+  <h2>ᛟ Projects</h2>
+  <div class="cards">
+    <article class="card">
+      <h3>Python tools</h3>
+      <p>22 finished tools on GitHub. Most-used: <code>jar_audit</code>, <code>pc_watch</code>,
+      <code>sys_snapshot</code>, plus <code>dup-find</code> and <code>pass-gen</code> (MIT).</p>
+      <a href="https://github.com/smallrug2">github.com/smallrug2</a>
+    </article>
+    <article class="card">
+      <h3>Herobrine Invasion Pack</h3>
+      <p>My Minecraft 1.20.1 Forge modpack — horror, bosses, and a crawling dimension,
+      tuned for performance.</p>
+    </article>
+    <article class="card">
+      <h3>Simpletech</h3>
+      <p>Local computer repair, PC builds, and home Wi-Fi / network setup.</p>
+    </article>
+    <article class="card">
+      <h3>Lobby Sentinels</h3>
+      <p>My VRChat group keeping lobbies safe — 18+, evidence-based reporting, with an 18+ bar.</p>
+    </article>
+    <article class="card">
+      <h3>Rainbow Library</h3>
+      <p>Where I write runes and help keep the community's TV PG-13. Home of my Viking poems.</p>
+    </article>
+  </div>
+</section>
+
+<section id="links">
+  <h2>ᛚ Links</h2>
+  <ul class="link-list">
+    <li><a href="https://github.com/smallrug2">GitHub — smallrug2</a></li>
+    <li><a href="https://www.youtube.com/@smallrug2">YouTube — @smallrug2</a></li>
+    <li><a href="https://www.tiktok.com/@smallrug">TikTok — smallrug</a></li>
+    <li><a href="https://www.twitch.tv/swordkiller908">Twitch — swordkiller908</a></li>
+    <li><a href="https://x.com/ParsecDeniers02">X — @ParsecDeniers02</a></li>
+    <li><a href="https://www.instagram.com/smallrug2">Instagram — smallrug2</a></li>
+  </ul>
+</section>
+</main>
+
+<footer>
+  <p>Site by <strong>smallrug2</strong> · Rune-hours idea inspired by
+  <a href="https://github.com/lytrawroper-lang/rune-hours">lytrawroper-lang's rune-hours</a> ·
+  Built with <strong>Spark</strong>, a Muse personal agent.</p>
+  <p>HTML, CSS &amp; JavaScript · Hosted on GitHub Pages · ᚠᚢᚦᚨᚱᚲ</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
