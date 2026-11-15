@@ -55,6 +55,7 @@ nav .brand { font-weight: 700; font-size: 1.15rem; text-decoration: none; }
 }
 
 .hero h1 { font-size: 2.6rem; margin: 0.6rem 0 0.2rem; }
+.welcome { color: var(--gold); font-size: 1.15rem; margin: 0.9rem 0 0; }
 .tagline { color: var(--purple-light); font-size: 1.1rem; margin: 0.2rem 0; }
 .status { color: var(--gold); font-style: italic; margin: 0.2rem 0; }
 .rune-strip { letter-spacing: 0.35rem; color: var(--muted); margin-top: 1rem; }
