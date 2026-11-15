@@ -326,3 +326,8 @@ button:disabled { opacity: 0.6; cursor: wait; }
 .alpha-btn { background: var(--panel); color: var(--ink); border: 1px solid var(--border); }
 .alpha-btn.active { background: var(--purple); border-color: var(--purple); }
 .alpha-note { color: var(--muted); font-size: 0.92rem; }
+.sort-btn, .sys-btn { background: var(--panel); color: var(--ink); border: 1px solid var(--border); }
+.sort-btn.active, .sys-btn.active { background: var(--purple); border-color: var(--purple); }
+.sort-row { align-items: center; margin-top: 0.5rem; }
+.sort-label { color: var(--muted); font-size: 0.9rem; }
+.conv-note { color: var(--muted); font-size: 0.92rem; }

@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Connie ✦ smallrug2 — Witch, Rune Writer, White-Hat Hacker</title>
 <meta name="description" content="smallrug2 — Connie, a trans witch, Elder Futhark rune writer, ethical hacker and builder. Runes, code, projects and links.">
-<link rel="stylesheet" href="styles.css">
+<!-- Bump ?v= on the CSS/JS links with every deploy, so visitors never get a mixed old/new page from cache. -->
+<link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 <div id="float-runes" aria-hidden="true"></div>
@@ -71,18 +72,26 @@
 <section id="runes" class="view" data-view="runes">
   <h2>ᚱ Runes</h2>
   <p>I write in Elder Futhark every day, and I know the other rows too. Pick an alphabet below —
-  Elder Futhark, both kinds of Younger Futhark, and the Anglo-Saxon Futhorc — then try the rune
-  of the current hour, the converter, and a rune cast. The rune-hours idea was inspired by
+  Elder Futhark, both kinds of Younger Futhark, Staveless Hälsinge, Medieval runes, and the
+  Anglo-Saxon Futhorc — then try the rune of the current hour, the converter, and a rune cast.
+  The rune-hours idea was inspired by
   <a href="https://github.com/lytrawroper-lang/rune-hours">lytrawroper-lang's rune-hours</a> —
   thank you for the spark. This version is my own build, with every alphabet checked against
-  its sources.</p>
+  the rune poems, the manuscript orders, and the Valhyr rune converter I learned from.</p>
 
   <h3>The alphabets</h3>
   <div class="tabs">
     <button class="alpha-btn active" data-alpha="elder" type="button">Elder Futhark · 24</button>
     <button class="alpha-btn" data-alpha="long" type="button">Younger, long-branch · 16</button>
     <button class="alpha-btn" data-alpha="short" type="button">Younger, short-twig · 16</button>
+    <button class="alpha-btn" data-alpha="staveless" type="button">Staveless Hälsinge · 16</button>
+    <button class="alpha-btn" data-alpha="medieval" type="button">Medieval runes · 23</button>
     <button class="alpha-btn" data-alpha="futhorc" type="button">Anglo-Saxon Futhorc · 33</button>
+  </div>
+  <div class="tabs sort-row">
+    <span class="sort-label">Order:</span>
+    <button class="sort-btn" data-sort="traditional" type="button">Traditional</button>
+    <button class="sort-btn active" data-sort="az" type="button">A–Z by name</button>
   </div>
   <p id="alpha-note" class="alpha-note"></p>
   <div id="rune-grid" class="rune-grid"></div>
@@ -97,7 +106,15 @@
   </div>
 
   <h3>Write in runes</h3>
-  <p>Type anything and watch it become runes. <code>th</code> becomes ᚦ, <code>ng</code> becomes ᛜ.</p>
+  <p>Type anything and watch it become runes. Pick a system — the same text converts differently in each row. Staveless Hälsinge has no Unicode characters, so it can't be typed; see its tab above.</p>
+  <div class="tabs">
+    <button class="sys-btn active" data-system="elder" type="button">Elder Futhark</button>
+    <button class="sys-btn" data-system="youngerLong" type="button">Younger, long-branch</button>
+    <button class="sys-btn" data-system="youngerShort" type="button">Younger, short-twig</button>
+    <button class="sys-btn" data-system="medieval" type="button">Medieval</button>
+    <button class="sys-btn" data-system="futhorc" type="button">Anglo-Saxon Futhorc</button>
+  </div>
+  <p id="conv-note" class="conv-note"></p>
   <textarea id="rune-input" rows="3" placeholder="Type here… try your name"></textarea>
   <div id="rune-output" class="rune-output" aria-live="polite"></div>
   <button id="copy-runes" type="button">Copy runes</button>
@@ -286,6 +303,6 @@ public class RuneConverter {
   <p>No trackers, no visitor logging — this site collects nothing about you.</p>
 </footer>
 
-<script src="script.js"></script>
+<script src="script.js?v=2"></script>
 </body>
 </html>

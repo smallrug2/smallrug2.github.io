@@ -89,10 +89,48 @@ const FUTHORC = [
   { glyph: "ᚸ", name: "Gar",    sound: "g",  meaning: "spear" },
 ];
 
+// Medieval runes (the futhork), 12th–17th century: the Younger row in its
+// mixed medieval forms, plus the seven stung (dotted) runes. Forms varied
+// by place and time; this is the standard inventory.
+const MEDIEVAL = [
+  { glyph: "ᚠ", name: "Fé",     sound: "f",  meaning: "wealth, cattle" },
+  { glyph: "ᚢ", name: "Úr",     sound: "u",  meaning: "drizzle, dross" },
+  { glyph: "ᚦ", name: "Þurs",   sound: "th", meaning: "giant, torment" },
+  { glyph: "ᚮ", name: "Óss",    sound: "o",  meaning: "river mouth; a god" },
+  { glyph: "ᚱ", name: "Reið",   sound: "r",  meaning: "riding, a journey" },
+  { glyph: "ᚴ", name: "Kaun",   sound: "k",  meaning: "ulcer, a sore" },
+  { glyph: "ᚼ", name: "Hagall", sound: "h",  meaning: "hail" },
+  { glyph: "ᚿ", name: "Nauðr",  sound: "n",  meaning: "need, constraint" },
+  { glyph: "ᛁ", name: "Íss",    sound: "i",  meaning: "ice" },
+  { glyph: "ᛆ", name: "Ár",     sound: "a",  meaning: "good year, harvest" },
+  { glyph: "ᛋ", name: "Sól",    sound: "s",  meaning: "sun" },
+  { glyph: "ᛐ", name: "Týr",    sound: "t",  meaning: "the god Týr" },
+  { glyph: "ᛒ", name: "Bjarkan", sound: "b", meaning: "birch" },
+  { glyph: "ᛘ", name: "Maðr",   sound: "m",  meaning: "man, a human being" },
+  { glyph: "ᛚ", name: "Lǫgr",   sound: "l",  meaning: "water, the sea" },
+  { glyph: "ᛦ", name: "Ýr",     sound: "y",  meaning: "yew, a bow" },
+  { glyph: "ᚡ", name: "Stung fé",      sound: "v",  meaning: "stung fé — the v sound" },
+  { glyph: "ᚤ", name: "Stung úr",      sound: "y",  meaning: "stung úr — the y sound" },
+  { glyph: "ᚧ", name: "Stung þurs",    sound: "ð",  meaning: "stung þurs — the voiced th sound" },
+  { glyph: "ᚵ", name: "Stung kaun",    sound: "g",  meaning: "stung kaun — the g sound" },
+  { glyph: "ᛂ", name: "Stung íss",     sound: "e",  meaning: "stung íss — the e sound" },
+  { glyph: "ᛑ", name: "Stung týr",     sound: "d",  meaning: "stung týr — the d sound" },
+  { glyph: "ᛔ", name: "Stung bjarkan", sound: "p",  meaning: "stung bjarkan — the p sound" },
+];
+
+// Staveless (Hälsinge) runes: the short-twig runes cut down to bare twigs
+// with no main stave. They were never given Unicode characters, so the
+// cards show the short-twig forms they were cut from — the page note says
+// so. No staveless form of óss has ever been found.
+const STAVELESS = YOUNGER.map((r) => ({ glyph: r.short, name: r.name, sound: r.sound, meaning: r.meaning }));
+STAVELESS[3].meaning = "river mouth; a god — no staveless form has been found";
+
 const ALPHA_NOTES = {
-  elder: "The oldest row — 24 runes, 2nd–8th century, grouped in three ættir of eight. Eihwaz comes before Perthro in every table here.",
+  elder: "The oldest row — 24 runes, 2nd–8th century, grouped in three ættir of eight. Traditional order runs Fehu to Othala, Eihwaz before Perthro — the hour table below always uses it.",
   long: "The Viking Age row — 16 runes in long-branch (Danish) forms. One rune often covered several sounds: ᚴ is both k and g, ᛏ both t and d.",
   short: "The same 16 runes in short-twig (Swedish-Norwegian) forms. Nine runes differ from the long-branch shapes; the order and sounds are the same.",
+  staveless: "Staveless (Hälsinge) runes, c. 1000–1100 — the short-twig runes cut down to bare twigs, with no main stave. They were never given Unicode characters, so they cannot be typed as text; the shapes shown are the short-twig forms they were cut from, and no staveless form of óss has ever been found.",
+  medieval: "Medieval runes (the futhork), 12th–17th century — the Younger row expanded with stung (dotted) runes, so nearly one rune stands for one sound. Forms varied by place and time; this is the standard inventory, with the seven stung runes last.",
   futhorc: "The English row — 33 runes. Order follows the 11th-century Cotton Domitian A.ix manuscript; the Old English Rune Poem orders a few differently, and the last four (cweord, calc, stan, gar) appear only in manuscripts.",
 };
 
@@ -101,17 +139,24 @@ const ALPHA_NOTES = {
 // from strings, so nothing typed or loaded can inject markup.
 const grid = document.getElementById("rune-grid");
 const alphaNote = document.getElementById("alpha-note");
-function renderAlphabet(key) {
+let alphaKey = "elder";
+let alphaSort = "az"; // A–Z by name; "traditional" keeps the historical row order
+function renderAlphabet() {
   grid.textContent = "";
-  alphaNote.textContent = ALPHA_NOTES[key];
+  alphaNote.textContent = ALPHA_NOTES[alphaKey];
   let entries;
-  if (key === "elder") {
+  if (alphaKey === "elder") {
     entries = RUNES.map((r) => ({ glyph: r.glyph, name: r.name, sound: r.sound + " · " + r.aett, meaning: r.meaning }));
-  } else if (key === "futhorc") {
-    entries = FUTHORC;
+  } else if (alphaKey === "futhorc") {
+    entries = FUTHORC.slice();
+  } else if (alphaKey === "medieval") {
+    entries = MEDIEVAL.slice();
+  } else if (alphaKey === "staveless") {
+    entries = STAVELESS.slice();
   } else {
-    entries = YOUNGER.map((r) => ({ glyph: key === "long" ? r.long : r.short, name: r.name, sound: r.sound, meaning: r.meaning }));
+    entries = YOUNGER.map((r) => ({ glyph: alphaKey === "long" ? r.long : r.short, name: r.name, sound: r.sound, meaning: r.meaning }));
   }
+  if (alphaSort === "az") entries.sort((a, b) => a.name.localeCompare(b.name));
   for (const r of entries) {
     const card = document.createElement("article");
     card.className = "rune-card";
@@ -133,10 +178,19 @@ document.querySelectorAll(".alpha-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".alpha-btn").forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
-    renderAlphabet(btn.dataset.alpha);
+    alphaKey = btn.dataset.alpha;
+    renderAlphabet();
   });
 });
-renderAlphabet("elder");
+document.querySelectorAll(".sort-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".sort-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    alphaSort = btn.dataset.sort;
+    renderAlphabet();
+  });
+});
+renderAlphabet();
 
 // ---- Rune of the hour (hour 0 = Fehu … hour 23 = Othala) ----
 const now = new Date();
@@ -170,7 +224,10 @@ RUNES.forEach((r, i) => {
   tbody.appendChild(tr);
 });
 
-// ---- Rune converter ----
+// ---- Rune converter: five systems, one text box ----
+// Elder MAP is unchanged (verified). The other maps follow each row's own
+// rules: Younger reuses one rune for several sounds, Medieval uses stung
+// runes for one sound each, Futhorc gives digraphs their own runes.
 const MAP = {
   th: "ᚦ", ng: "ᛜ",
   a: "ᚨ", b: "ᛒ", c: "ᚲ", d: "ᛞ", e: "ᛖ", f: "ᚠ", g: "ᚷ",
@@ -178,19 +235,77 @@ const MAP = {
   o: "ᛟ", p: "ᛈ", q: "ᚲ", r: "ᚱ", s: "ᛊ", t: "ᛏ", u: "ᚢ",
   v: "ᚹ", w: "ᚹ", x: "ᚲᛊ", y: "ᛃ", z: "ᛉ",
 };
+const MAPS = {
+  elder: MAP,
+  youngerLong: {
+    th: "ᚦ", ng: "ᚴ",
+    a: "ᛅ", b: "ᛒ", c: "ᚴ", d: "ᛏ", e: "ᛁ", f: "ᚠ", g: "ᚴ",
+    h: "ᚼ", i: "ᛁ", j: "ᛁ", k: "ᚴ", l: "ᛚ", m: "ᛘ", n: "ᚾ",
+    o: "ᚢ", p: "ᛒ", q: "ᚴ", r: "ᚱ", s: "ᛋ", t: "ᛏ", u: "ᚢ",
+    v: "ᚢ", w: "ᚢ", x: "ᚴᛋ", y: "ᚢ", z: "ᛋ",
+    "þ": "ᚦ", "ð": "ᚦ", "å": "ᚬ", "æ": "ᛅ", "ø": "ᚢ",
+  },
+  youngerShort: {
+    th: "ᚦ", ng: "ᚴ",
+    a: "ᛆ", b: "ᛓ", c: "ᚴ", d: "ᛐ", e: "ᛁ", f: "ᚠ", g: "ᚴ",
+    h: "ᚽ", i: "ᛁ", j: "ᛁ", k: "ᚴ", l: "ᛚ", m: "ᛙ", n: "ᚿ",
+    o: "ᚢ", p: "ᛓ", q: "ᚴ", r: "ᚱ", s: "ᛌ", t: "ᛐ", u: "ᚢ",
+    v: "ᚢ", w: "ᚢ", x: "ᚴᛌ", y: "ᚢ", z: "ᛌ",
+    "þ": "ᚦ", "ð": "ᚦ", "å": "ᚭ", "æ": "ᛆ", "ø": "ᚢ",
+  },
+  medieval: {
+    th: "ᚦ", ng: "ᚶ",
+    a: "ᛆ", b: "ᛒ", c: "ᚴ", d: "ᛑ", e: "ᛂ", f: "ᚠ", g: "ᚵ",
+    h: "ᚼ", i: "ᛁ", j: "ᛂ", k: "ᚴ", l: "ᛚ", m: "ᛘ", n: "ᚿ",
+    o: "ᚮ", p: "ᛔ", q: "ᚴ", r: "ᚱ", s: "ᛋ", t: "ᛐ", u: "ᚢ",
+    v: "ᚡ", w: "ᚡ", x: "ᚴᛋ", y: "ᚤ", z: "ᛋ",
+    "þ": "ᚦ", "ð": "ᚧ", "æ": "ᛅ", "ø": "ᚬ", "å": "ᚮ",
+  },
+  futhorc: {
+    ea: "ᛠ", eo: "ᛇ", io: "ᛡ", ng: "ᛝ", th: "ᚦ", st: "ᛥ", cw: "ᛢ",
+    a: "ᚪ", b: "ᛒ", c: "ᚳ", d: "ᛞ", e: "ᛖ", f: "ᚠ", g: "ᚷ",
+    h: "ᚻ", i: "ᛁ", j: "ᛄ", k: "ᚳ", l: "ᛚ", m: "ᛗ", n: "ᚾ",
+    o: "ᚩ", p: "ᛈ", q: "ᚳ", r: "ᚱ", s: "ᛊ", t: "ᛏ", u: "ᚢ",
+    v: "ᚹ", w: "ᚹ", x: "ᛉ", y: "ᚣ", z: "ᛊ",
+    "þ": "ᚦ", "ð": "ᚦ", "æ": "ᚫ", "œ": "ᛟ",
+  },
+};
+const CONV_NOTES = {
+  elder: "th becomes ᚦ, ng becomes ᛜ.",
+  youngerLong: "One rune covers several sounds: k and g share ᚴ, t and d share ᛏ, u, o and w share ᚢ.",
+  youngerShort: "One rune covers several sounds: k and g share ᚴ, t and d share ᛐ, u, o and w share ᚢ.",
+  medieval: "Stung runes give one rune per sound: e is ᛂ, g is ᚵ, d is ᛑ, p is ᛔ.",
+  futhorc: "Digraphs have their own runes: ea ᛠ, eo ᛇ, io ᛡ, ng ᛝ, st ᛥ, cw ᛢ.",
+};
+let convSystem = "elder";
 function toRunes(text) {
+  const map = MAPS[convSystem];
   text = text.toLowerCase();
   let out = "";
   for (let i = 0; i < text.length;) {
     const pair = text.slice(i, i + 2);
-    if (MAP[pair]) { out += MAP[pair]; i += 2; }
-    else { out += MAP[text[i]] || text[i]; i += 1; }
+    if (map[pair]) { out += map[pair]; i += 2; }
+    else { out += map[text[i]] || text[i]; i += 1; }
   }
   return out;
 }
 const input = document.getElementById("rune-input");
 const output = document.getElementById("rune-output");
+const convNote = document.getElementById("conv-note");
+function refreshConverter() {
+  convNote.textContent = CONV_NOTES[convSystem];
+  output.textContent = toRunes(input.value);
+}
 input.addEventListener("input", () => { output.textContent = toRunes(input.value); });
+document.querySelectorAll(".sys-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".sys-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    convSystem = btn.dataset.system;
+    refreshConverter();
+  });
+});
+refreshConverter();
 document.getElementById("copy-runes").addEventListener("click", async () => {
   if (!output.textContent) return;
   await navigator.clipboard.writeText(output.textContent);
