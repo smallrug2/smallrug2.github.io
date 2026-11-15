@@ -25,7 +25,8 @@
   <h1>Connie</h1>
   <p class="tagline">smallrug2 · Trans Witch · Rune Writer · White-Hat Hacker</p>
   <p class="status">“just a cute little witch”</p>
-  <p class="rune-strip" aria-hidden="true">ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ᚷ ᚹ ᚺ ᚾ ᛁ ᛃ ᛇ ᛈ ᛉ ᛊ ᛏ ᛒ ᛖ ᛗ ᛚ ᛜ ᛞ ᛟ</p>
+  <p class="rune-strip" aria-hidden="true">ᚨ ᛒ ᚲ ᛞ ᛖ ᚠ ᚷ ᚺ ᛁ ᛃ ᚲ ᛚ ᛗ ᚾ ᛟ ᛈ ᚲ ᚱ ᛊ ᛏ ᚢ ᚹ ᚹ ᚲᛊ ᛃ ᛉ</p>
+  <p class="strip-caption">A to Z, written in runes</p>
 </header>
 
 <main>
@@ -68,14 +69,22 @@
 </section>
 
 <section id="runes" class="view" data-view="runes">
-  <h2>ᚱ Runes — Elder Futhark</h2>
-  <p>I write in Elder Futhark every day. Here is the full alphabet, the rune of the current hour,
-  a converter so you can write in runes too, and a rune cast. The rune-hours idea was inspired by
+  <h2>ᚱ Runes</h2>
+  <p>I write in Elder Futhark every day, and I know the other rows too. Pick an alphabet below —
+  Elder Futhark, both kinds of Younger Futhark, and the Anglo-Saxon Futhorc — then try the rune
+  of the current hour, the converter, and a rune cast. The rune-hours idea was inspired by
   <a href="https://github.com/lytrawroper-lang/rune-hours">lytrawroper-lang's rune-hours</a> —
-  thank you for the spark. This version is my own build, with the dictionary order kept
-  consistent everywhere.</p>
+  thank you for the spark. This version is my own build, with every alphabet checked against
+  its sources.</p>
 
-  <h3>The dictionary — all 24 runes</h3>
+  <h3>The alphabets</h3>
+  <div class="tabs">
+    <button class="alpha-btn active" data-alpha="elder" type="button">Elder Futhark · 24</button>
+    <button class="alpha-btn" data-alpha="long" type="button">Younger, long-branch · 16</button>
+    <button class="alpha-btn" data-alpha="short" type="button">Younger, short-twig · 16</button>
+    <button class="alpha-btn" data-alpha="futhorc" type="button">Anglo-Saxon Futhorc · 33</button>
+  </div>
+  <p id="alpha-note" class="alpha-note"></p>
   <div id="rune-grid" class="rune-grid"></div>
 
   <h3>Rune of the hour</h3>

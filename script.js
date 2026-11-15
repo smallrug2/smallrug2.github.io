@@ -27,26 +27,116 @@ const RUNES = [
   { glyph: "ᛟ", name: "Othala",  sound: "o",  aett: "Tyr's aett",      meaning: "homeland, inheritance, legacy" },
 ];
 
-// ---- Dictionary grid ----
+// ---- Other alphabets ----
+// Younger Futhark: one row of 16, two carving styles. The names, sounds
+// and order are the same; nine glyphs differ between long-branch (Danish)
+// and short-twig (Swedish-Norwegian) forms.
+const YOUNGER = [
+  { name: "Fé",      sound: "f",           meaning: "wealth, cattle",              long: "ᚠ", short: "ᚠ" },
+  { name: "Úr",      sound: "u · o · v · w", meaning: "drizzle, dross",            long: "ᚢ", short: "ᚢ" },
+  { name: "Þurs",    sound: "th",          meaning: "giant, torment",              long: "ᚦ", short: "ᚦ" },
+  { name: "Óss",     sound: "ą · o",       meaning: "river mouth; a god",          long: "ᚬ", short: "ᚭ" },
+  { name: "Reið",    sound: "r",           meaning: "riding, a journey",           long: "ᚱ", short: "ᚱ" },
+  { name: "Kaun",    sound: "k · g",       meaning: "ulcer, a sore",               long: "ᚴ", short: "ᚴ" },
+  { name: "Hagall",  sound: "h",           meaning: "hail",                        long: "ᚼ", short: "ᚽ" },
+  { name: "Nauðr",   sound: "n",           meaning: "need, constraint",            long: "ᚾ", short: "ᚿ" },
+  { name: "Íss",     sound: "i · e",       meaning: "ice",                         long: "ᛁ", short: "ᛁ" },
+  { name: "Ár",      sound: "a",           meaning: "good year, harvest",          long: "ᛅ", short: "ᛆ" },
+  { name: "Sól",     sound: "s",           meaning: "sun",                         long: "ᛋ", short: "ᛌ" },
+  { name: "Týr",     sound: "t · d",       meaning: "the god Týr",                 long: "ᛏ", short: "ᛐ" },
+  { name: "Bjarkan", sound: "b · p",       meaning: "birch",                       long: "ᛒ", short: "ᛓ" },
+  { name: "Maðr",    sound: "m",           meaning: "man, a human being",          long: "ᛘ", short: "ᛙ" },
+  { name: "Lǫgr",    sound: "l",           meaning: "water, the sea",              long: "ᛚ", short: "ᛚ" },
+  { name: "Ýr",      sound: "ʀ",           meaning: "yew, a bow; word-final r",    long: "ᛦ", short: "ᛧ" },
+];
+
+// Anglo-Saxon Futhorc: 33 runes. Order follows the 11th-century Cotton
+// Domitian A.ix manuscript (dæg before ēðel, ēar before īor, then the four
+// manuscript-only runes). The Old English Rune Poem orders a few differently.
+const FUTHORC = [
+  { glyph: "ᚠ", name: "Feoh",   sound: "f",  meaning: "wealth, cattle" },
+  { glyph: "ᚢ", name: "Ur",     sound: "u",  meaning: "aurochs, strength" },
+  { glyph: "ᚦ", name: "Thorn",  sound: "th", meaning: "thorn, danger" },
+  { glyph: "ᚩ", name: "Os",     sound: "o",  meaning: "god, mouth; divine speech" },
+  { glyph: "ᚱ", name: "Rad",    sound: "r",  meaning: "riding, a journey" },
+  { glyph: "ᚳ", name: "Cen",    sound: "c",  meaning: "torch, knowledge" },
+  { glyph: "ᚷ", name: "Gyfu",   sound: "g",  meaning: "gift, generosity" },
+  { glyph: "ᚹ", name: "Wynn",   sound: "w",  meaning: "joy, bliss" },
+  { glyph: "ᚻ", name: "Hægl",   sound: "h",  meaning: "hail" },
+  { glyph: "ᚾ", name: "Nyd",    sound: "n",  meaning: "need, hardship" },
+  { glyph: "ᛁ", name: "Is",     sound: "i",  meaning: "ice, stillness" },
+  { glyph: "ᛄ", name: "Ger",    sound: "j",  meaning: "year, harvest" },
+  { glyph: "ᛇ", name: "Eoh",    sound: "eo", meaning: "yew tree, endurance" },
+  { glyph: "ᛈ", name: "Peord",  sound: "p",  meaning: "dice cup, chance — meaning debated" },
+  { glyph: "ᛉ", name: "Eolhx",  sound: "x",  meaning: "elk-sedge, protection" },
+  { glyph: "ᛊ", name: "Sigel",  sound: "s",  meaning: "sun, victory" },
+  { glyph: "ᛏ", name: "Tir",    sound: "t",  meaning: "Týr, justice" },
+  { glyph: "ᛒ", name: "Beorc",  sound: "b",  meaning: "birch, renewal" },
+  { glyph: "ᛖ", name: "Eh",     sound: "e",  meaning: "horse, trust" },
+  { glyph: "ᛗ", name: "Mann",   sound: "m",  meaning: "man, humanity" },
+  { glyph: "ᛚ", name: "Lagu",   sound: "l",  meaning: "water, the sea" },
+  { glyph: "ᛝ", name: "Ing",    sound: "ng", meaning: "Ing, fertility, potential" },
+  { glyph: "ᛞ", name: "Dæg",    sound: "d",  meaning: "day, dawn" },
+  { glyph: "ᛟ", name: "Ethel",  sound: "œ",  meaning: "homeland, inheritance" },
+  { glyph: "ᚪ", name: "Ac",     sound: "a",  meaning: "oak, strength" },
+  { glyph: "ᚫ", name: "Æsc",    sound: "æ",  meaning: "ash tree" },
+  { glyph: "ᚣ", name: "Yr",     sound: "y",  meaning: "bow, skill" },
+  { glyph: "ᛠ", name: "Ear",    sound: "ea", meaning: "earth, the grave" },
+  { glyph: "ᛡ", name: "Ior",    sound: "io", meaning: "serpent, the eel" },
+  { glyph: "ᛢ", name: "Cweord", sound: "cw", meaning: "fire-drill, the pyre" },
+  { glyph: "ᛣ", name: "Calc",   sound: "k",  meaning: "chalice, vessel" },
+  { glyph: "ᛥ", name: "Stan",   sound: "st", meaning: "stone, permanence" },
+  { glyph: "ᚸ", name: "Gar",    sound: "g",  meaning: "spear" },
+];
+
+const ALPHA_NOTES = {
+  elder: "The oldest row — 24 runes, 2nd–8th century, grouped in three ættir of eight. Eihwaz comes before Perthro in every table here.",
+  long: "The Viking Age row — 16 runes in long-branch (Danish) forms. One rune often covered several sounds: ᚴ is both k and g, ᛏ both t and d.",
+  short: "The same 16 runes in short-twig (Swedish-Norwegian) forms. Nine runes differ from the long-branch shapes; the order and sounds are the same.",
+  futhorc: "The English row — 33 runes. Order follows the 11th-century Cotton Domitian A.ix manuscript; the Old English Rune Poem orders a few differently, and the last four (cweord, calc, stan, gar) appear only in manuscripts.",
+};
+
+// ---- Alphabet grid ----
 // Cards are built with textContent only — no page HTML is ever assembled
 // from strings, so nothing typed or loaded can inject markup.
 const grid = document.getElementById("rune-grid");
-for (const r of RUNES) {
-  const card = document.createElement("article");
-  card.className = "rune-card";
-  const glyph = document.createElement("span");
-  glyph.className = "glyph";
-  glyph.textContent = r.glyph;
-  const name = document.createElement("h4");
-  name.textContent = r.name;
-  const sound = document.createElement("p");
-  sound.className = "sound";
-  sound.textContent = r.sound + " · " + r.aett;
-  const meaning = document.createElement("p");
-  meaning.textContent = r.meaning;
-  card.append(glyph, name, sound, meaning);
-  grid.appendChild(card);
+const alphaNote = document.getElementById("alpha-note");
+function renderAlphabet(key) {
+  grid.textContent = "";
+  alphaNote.textContent = ALPHA_NOTES[key];
+  let entries;
+  if (key === "elder") {
+    entries = RUNES.map((r) => ({ glyph: r.glyph, name: r.name, sound: r.sound + " · " + r.aett, meaning: r.meaning }));
+  } else if (key === "futhorc") {
+    entries = FUTHORC;
+  } else {
+    entries = YOUNGER.map((r) => ({ glyph: key === "long" ? r.long : r.short, name: r.name, sound: r.sound, meaning: r.meaning }));
+  }
+  for (const r of entries) {
+    const card = document.createElement("article");
+    card.className = "rune-card";
+    const glyph = document.createElement("span");
+    glyph.className = "glyph";
+    glyph.textContent = r.glyph;
+    const name = document.createElement("h4");
+    name.textContent = r.name;
+    const sound = document.createElement("p");
+    sound.className = "sound";
+    sound.textContent = r.sound;
+    const meaning = document.createElement("p");
+    meaning.textContent = r.meaning;
+    card.append(glyph, name, sound, meaning);
+    grid.appendChild(card);
+  }
 }
+document.querySelectorAll(".alpha-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".alpha-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderAlphabet(btn.dataset.alpha);
+  });
+});
+renderAlphabet("elder");
 
 // ---- Rune of the hour (hour 0 = Fehu … hour 23 = Othala) ----
 const now = new Date();

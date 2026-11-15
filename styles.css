@@ -320,3 +320,9 @@ button:disabled { opacity: 0.6; cursor: wait; }
 @keyframes blink { 50% { opacity: 0; } }
 
 .view[data-view="code"] .code-block { border-color: #2ea043; box-shadow: 0 0 14px rgba(46, 160, 67, 0.18); }
+
+/* ---- A–Z strip caption + alphabet tabs ---- */
+.strip-caption { color: var(--muted); font-size: 0.85rem; margin: 0.2rem 0 0; letter-spacing: 0.05rem; }
+.alpha-btn { background: var(--panel); color: var(--ink); border: 1px solid var(--border); }
+.alpha-btn.active { background: var(--purple); border-color: var(--purple); }
+.alpha-note { color: var(--muted); font-size: 0.92rem; }
