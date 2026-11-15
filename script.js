@@ -203,3 +203,54 @@ for (let i = 0; i < 14; i++) {
   s.style.animationDelay = -Math.random() * 30 + "s";
   floatBox.appendChild(s);
 }
+
+// ---- Decorative Kali terminal (types itself, runs nothing) ----
+const termLines = [
+  "$ whoami",
+  "connie — witch · rune writer · white-hat",
+  "$ cat ~/runes.txt",
+  "ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ",
+  "$ ./cast-rune.sh",
+  "ᛊ Sowilo — victory, unstoppable energy",
+];
+let termStarted = false;
+function startTerm() {
+  if (termStarted) return;
+  termStarted = true;
+  const out = document.getElementById("term-output");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const cursor = document.createElement("span");
+  cursor.className = "term-cursor";
+  out.appendChild(cursor);
+  if (reduceMotion) {
+    termLines.forEach((text) => {
+      const line = document.createElement("div");
+      line.textContent = text;
+      out.insertBefore(line, cursor);
+    });
+    return;
+  }
+  let li = 0;
+  function typeLine() {
+    if (li >= termLines.length) return;
+    const line = document.createElement("div");
+    out.insertBefore(line, cursor);
+    const text = termLines[li];
+    let ci = 0;
+    (function typeChar() {
+      if (ci <= text.length) {
+        line.textContent = text.slice(0, ci);
+        ci++;
+        setTimeout(typeChar, text.startsWith("$") ? 34 : 12);
+      } else {
+        li++;
+        setTimeout(typeLine, 320);
+      }
+    })();
+  }
+  typeLine();
+}
+navBtns.forEach((b) => b.addEventListener("click", () => {
+  if (b.dataset.viewTarget === "code") startTerm();
+}));
+if (document.querySelector('.view[data-view="code"].active')) startTerm();
