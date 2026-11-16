@@ -69,7 +69,7 @@ const FUTHORC = [
   { glyph: "ᛇ", name: "Eoh",    sound: "eo", meaning: "yew tree, endurance" },
   { glyph: "ᛈ", name: "Peord",  sound: "p",  meaning: "dice cup, chance — meaning debated" },
   { glyph: "ᛉ", name: "Eolhx",  sound: "x",  meaning: "elk-sedge, protection" },
-  { glyph: "ᛊ", name: "Sigel",  sound: "s",  meaning: "sun, victory" },
+  { glyph: "ᛋ", name: "Sigel",  sound: "s",  meaning: "sun, victory" },
   { glyph: "ᛏ", name: "Tir",    sound: "t",  meaning: "Týr, justice" },
   { glyph: "ᛒ", name: "Beorc",  sound: "b",  meaning: "birch, renewal" },
   { glyph: "ᛖ", name: "Eh",     sound: "e",  meaning: "horse, trust" },
@@ -134,16 +134,28 @@ const ALPHA_NOTES = {
   futhorc: "The English row — 33 runes. Order follows the 11th-century Cotton Domitian A.ix manuscript; the Old English Rune Poem orders a few differently, and the last four (cweord, calc, stan, gar) appear only in manuscripts.",
 };
 
+
+const LORE = {
+  elder: "The oldest runes we have \u2014 24 of them, carved from around 150 AD into the 700s, across the Germanic world, from Scandinavia to England and as far south as Hungary and Romania. The Kylver stone on Gotland, carved around 400 AD, shows the whole row in the order still used today: three families of eight, called \u00e6ttir. The names \u2014 Fehu, Uruz, Thurisaz \u2014 are reconstructed from later poems and related languages, because no rune poem survives from the Elder period itself. These are the runes of the early carvers, before the Viking Age trimmed the row down.",
+  long: "The Viking Age row. Around 800 AD the 24 runes were cut to 16, even as the Old Norse language was gaining sounds \u2014 so one rune had to cover several. The long-branch forms, with full-length side strokes, are the Danish style, carved across Denmark and the Viking world. The Norwegian and Icelandic rune poems, written down centuries later, are where the names come from: f\u00e9, \u00far, \u00feurs, \u00f3ss, all the way to \u00fdr.",
+  short: "The same 16 runes in the Swedish-Norwegian style: the twigs cut short, or standing on one side of the stave, so they were faster to carve. The famous R\u00f6k stone in Sweden, the longest runic inscription known, mixes short-twig runes with older forms and ciphers. Nine runes differ from the long-branch shapes; the other seven are identical, and the order and sounds never change.",
+  staveless: "The most stripped-down runes ever used: the short-twig forms cut down to bare twigs, with the main stave gone entirely. They come from H\u00e4lsingland in Sweden, used roughly 1000\u20131100, and reading them depends on how high each mark sits in the carved band. They were never given Unicode characters, so they cannot be typed as text \u2014 only drawn, or shown with a special font. No staveless form of \u00f3ss has ever been found.",
+  medieval: "When the Viking Age ended, the runes grew back. From the 12th century, carvers added stung \u2014 dotted \u2014 runes: a dot or bar on an old rune to give it its second sound, so nearly one rune stood for one sound again. The medieval futhork mixed long-branch and short-twig forms freely and stayed in everyday use for centuries. The Codex Runicus, a vellum manuscript from around 1300 holding the Scanian Law, is written entirely in medieval runes.",
+  futhorc: "The English row. Anglo-Saxon carvers went the other way from the Norse: instead of trimming the row, they grew it \u2014 from 24 to 28, 31, and finally 33 runes \u2014 to match the sounds of Old English. The Old English Rune Poem, 29 stanzas, gives a verse for each of the first 29. The full 33-rune order on this page follows the Cotton Domitian A.ix manuscript from the 11th century; the last four runes appear only in manuscripts, never in a poem.",
+};
+
 // ---- Alphabet grid ----
 // Cards are built with textContent only — no page HTML is ever assembled
 // from strings, so nothing typed or loaded can inject markup.
 const grid = document.getElementById("rune-grid");
 const alphaNote = document.getElementById("alpha-note");
+const alphaLore = document.getElementById("alpha-lore");
 let alphaKey = "elder";
 let alphaSort = "az"; // A–Z by name; "traditional" keeps the historical row order
 function renderAlphabet() {
   grid.textContent = "";
   alphaNote.textContent = ALPHA_NOTES[alphaKey];
+  alphaLore.textContent = LORE[alphaKey];
   let entries;
   if (alphaKey === "elder") {
     entries = RUNES.map((r) => ({ glyph: r.glyph, name: r.name, sound: r.sound + " · " + r.aett, meaning: r.meaning }));
@@ -192,36 +204,171 @@ document.querySelectorAll(".sort-btn").forEach((btn) => {
 });
 renderAlphabet();
 
-// ---- Rune of the hour (hour 0 = Fehu … hour 23 = Othala) ----
+// ---- Rune of the hour: five systems, 12/24-hour clock, dials ----
+// Times always come from the visitor's own clock (new Date() runs in
+// their browser), so the hour rune follows whoever is looking at the page.
+const HOUR_ROWS = {
+  elder: RUNES,
+  youngerLong: YOUNGER.map((r) => ({ glyph: r.long, name: r.name, meaning: r.meaning })),
+  youngerShort: YOUNGER.map((r) => ({ glyph: r.short, name: r.name, meaning: r.meaning })),
+  medieval: MEDIEVAL,
+  futhorc: FUTHORC,
+};
+const HOUR_SYSTEM_NAMES = {
+  elder: "Elder Futhark",
+  youngerLong: "Younger, long-branch",
+  youngerShort: "Younger, short-twig",
+  medieval: "Medieval runes",
+  futhorc: "Anglo-Saxon Futhorc",
+};
+let hourSystem = "elder";
+let clockMode = "12";
 const now = new Date();
-const hour = now.getHours();
-const hourRune = RUNES[hour];
-const hourBox = document.getElementById("hour-rune");
-hourBox.textContent = "Right now, hour " + hour + ":00 belongs to ";
-const hourGlyph = document.createElement("span");
-hourGlyph.className = "glyph";
-hourGlyph.textContent = hourRune.glyph;
-const hourName = document.createElement("strong");
-hourName.textContent = " " + hourRune.name + " ";
-hourBox.append(hourGlyph, hourName, document.createTextNode("— " + hourRune.meaning + "."));
+function fmtHour(h) {
+  if (clockMode === "24") return String(h).padStart(2, "0") + ":00";
+  const ap = h < 12 ? "AM" : "PM";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return h12 + ":00 " + ap;
+}
+function fmtTime(d) {
+  const s = String(d.getSeconds()).padStart(2, "0");
+  const m = String(d.getMinutes()).padStart(2, "0");
+  if (clockMode === "24") return String(d.getHours()).padStart(2, "0") + ":" + m + ":" + s;
+  const ap = d.getHours() < 12 ? "AM" : "PM";
+  const h12 = d.getHours() % 12 === 0 ? 12 : d.getHours() % 12;
+  return h12 + ":" + m + ":" + s + " " + ap;
+}
+function hourRuneFor(row, h) { return row[h % row.length]; }
+function placeOnCircle(el, i, total, radiusPct) {
+  const angle = (i / total) * Math.PI * 2 - Math.PI / 2;
+  el.style.left = 50 + radiusPct * Math.cos(angle) + "%";
+  el.style.top = 50 + radiusPct * Math.sin(angle) + "%";
+}
 
-const tbody = document.querySelector("#hour-table tbody");
+// Hero welcome dial: the 24 Elder runes around a clock face, midnight at
+// the top, gold for day hours (6-17), violet for night hours.
+const dialSlots = document.getElementById("dial-slots");
+const dialLabels = [];
 RUNES.forEach((r, i) => {
-  const tr = document.createElement("tr");
-  if (i === hour) tr.className = "now";
-  const cells = [
-    String(i).padStart(2, "0") + ":00",
-    r.glyph,
-    r.name,
-    r.meaning,
-  ];
-  cells.forEach((text, j) => {
-    const td = document.createElement("td");
-    if (j === 1) td.className = "glyph";
-    td.textContent = text;
-    tr.appendChild(td);
+  const s = document.createElement("span");
+  s.className = "dial-label" + ((i >= 6 && i < 18) ? " day" : " night");
+  s.textContent = r.glyph;
+  placeOnCircle(s, i, 24, 44);
+  dialSlots.appendChild(s);
+  dialLabels.push(s);
+});
+
+// Clock wheel: one slot per rune of the selected system.
+const clockSlotsBox = document.getElementById("clock-slots");
+const clockWheel = document.getElementById("clock-wheel");
+let clockSlots = [];
+function buildClockWheel() {
+  const row = HOUR_ROWS[hourSystem];
+  clockSlotsBox.textContent = "";
+  clockSlots = [];
+  clockWheel.classList.toggle("dense", row.length > 24);
+  row.forEach((r, i) => {
+    const s = document.createElement("span");
+    s.className = "clock-slot";
+    s.textContent = r.glyph;
+    placeOnCircle(s, i, row.length, 44);
+    clockSlotsBox.appendChild(s);
+    clockSlots.push(s);
   });
-  tbody.appendChild(tr);
+}
+
+const hourBox = document.getElementById("hour-rune");
+const tbody = document.querySelector("#hour-table tbody");
+const clockGlyph = document.getElementById("clock-glyph");
+const clockName = document.getElementById("clock-name");
+const clockTimeEl = document.getElementById("clock-time");
+const clockMeaning = document.getElementById("clock-meaning");
+const dialGlyph = document.getElementById("dial-glyph");
+const dialClock = document.getElementById("dial-clock");
+const dialName = document.getElementById("dial-rune-name");
+const dialHand = document.getElementById("dial-hand");
+let lastHour = -1;
+function renderHour() {
+  const d = new Date();
+  const h = d.getHours();
+  const row = HOUR_ROWS[hourSystem];
+  const r = hourRuneFor(row, h);
+  const elderRune = RUNES[h];
+  hourBox.textContent = "Right now, " + fmtHour(h) + " belongs to ";
+  const g = document.createElement("span");
+  g.className = "glyph";
+  g.textContent = r.glyph;
+  const n = document.createElement("strong");
+  n.textContent = " " + r.name + " ";
+  hourBox.append(g, n, document.createTextNode("— " + r.meaning + " (" + HOUR_SYSTEM_NAMES[hourSystem] + ")."));
+  tbody.textContent = "";
+  for (let i = 0; i < 24; i++) {
+    const rr = hourRuneFor(row, i);
+    const tr = document.createElement("tr");
+    if (i === h) tr.className = "now";
+    [fmtHour(i), rr.glyph, rr.name, rr.meaning].forEach((text, j) => {
+      const td = document.createElement("td");
+      if (j === 1) td.className = "glyph";
+      td.textContent = text;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  }
+  clockGlyph.textContent = r.glyph;
+  clockName.textContent = r.name;
+  clockMeaning.textContent = r.meaning;
+  clockSlots.forEach((s, i) => s.classList.toggle("now", i === h % row.length));
+  dialGlyph.textContent = elderRune.glyph;
+  dialName.textContent = elderRune.name;
+  dialLabels.forEach((s, i) => s.classList.toggle("now", i === h));
+  lastHour = h;
+}
+function tickClock() {
+  const d = new Date();
+  clockTimeEl.textContent = fmtTime(d);
+  dialClock.textContent = fmtTime(d);
+  const deg = (d.getHours() % 24) * 15 + d.getMinutes() * 0.25;
+  dialHand.style.transform = "rotate(" + deg + "deg)";
+  if (d.getHours() !== lastHour) renderHour();
+}
+buildClockWheel();
+renderHour();
+tickClock();
+setInterval(tickClock, 1000);
+
+document.querySelectorAll(".hour-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".hour-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    hourSystem = btn.dataset.hourSystem;
+    buildClockWheel();
+    renderHour();
+  });
+});
+document.querySelectorAll(".clock-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".clock-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    clockMode = btn.dataset.clockMode;
+    renderHour();
+    tickClock();
+  });
+});
+
+// ---- Rune of a birth hour (Elder Futhark) ----
+document.getElementById("birth-btn").addEventListener("click", () => {
+  const birthOut = document.getElementById("birth-out");
+  const val = document.getElementById("birth-time").value;
+  if (!val) { birthOut.textContent = "Pick a time first — any hour of the day."; return; }
+  const h = parseInt(val.split(":")[0], 10);
+  const r = RUNES[h];
+  birthOut.textContent = "";
+  const g = document.createElement("span");
+  g.className = "glyph";
+  g.textContent = r.glyph;
+  const n = document.createElement("strong");
+  n.textContent = " " + r.name + " ";
+  birthOut.append(document.createTextNode("Born at " + fmtHour(h) + ": "), g, n, document.createTextNode("— " + r.meaning + "."));
 });
 
 // ---- Rune converter: five systems, one text box ----
@@ -241,7 +388,7 @@ const MAPS = {
     th: "ᚦ", ng: "ᚴ",
     a: "ᛅ", b: "ᛒ", c: "ᚴ", d: "ᛏ", e: "ᛁ", f: "ᚠ", g: "ᚴ",
     h: "ᚼ", i: "ᛁ", j: "ᛁ", k: "ᚴ", l: "ᛚ", m: "ᛘ", n: "ᚾ",
-    o: "ᚢ", p: "ᛒ", q: "ᚴ", r: "ᚱ", s: "ᛋ", t: "ᛏ", u: "ᚢ",
+    o: "ᚬ", p: "ᛒ", q: "ᚴ", r: "ᚱ", s: "ᛋ", t: "ᛏ", u: "ᚢ",
     v: "ᚢ", w: "ᚢ", x: "ᚴᛋ", y: "ᚢ", z: "ᛋ",
     "þ": "ᚦ", "ð": "ᚦ", "å": "ᚬ", "æ": "ᛅ", "ø": "ᚢ",
   },
@@ -249,7 +396,7 @@ const MAPS = {
     th: "ᚦ", ng: "ᚴ",
     a: "ᛆ", b: "ᛓ", c: "ᚴ", d: "ᛐ", e: "ᛁ", f: "ᚠ", g: "ᚴ",
     h: "ᚽ", i: "ᛁ", j: "ᛁ", k: "ᚴ", l: "ᛚ", m: "ᛙ", n: "ᚿ",
-    o: "ᚢ", p: "ᛓ", q: "ᚴ", r: "ᚱ", s: "ᛌ", t: "ᛐ", u: "ᚢ",
+    o: "ᚭ", p: "ᛓ", q: "ᚴ", r: "ᚱ", s: "ᛌ", t: "ᛐ", u: "ᚢ",
     v: "ᚢ", w: "ᚢ", x: "ᚴᛌ", y: "ᚢ", z: "ᛌ",
     "þ": "ᚦ", "ð": "ᚦ", "å": "ᚭ", "æ": "ᛆ", "ø": "ᚢ",
   },
@@ -265,15 +412,15 @@ const MAPS = {
     ea: "ᛠ", eo: "ᛇ", io: "ᛡ", ng: "ᛝ", th: "ᚦ", st: "ᛥ", cw: "ᛢ",
     a: "ᚪ", b: "ᛒ", c: "ᚳ", d: "ᛞ", e: "ᛖ", f: "ᚠ", g: "ᚷ",
     h: "ᚻ", i: "ᛁ", j: "ᛄ", k: "ᚳ", l: "ᛚ", m: "ᛗ", n: "ᚾ",
-    o: "ᚩ", p: "ᛈ", q: "ᚳ", r: "ᚱ", s: "ᛊ", t: "ᛏ", u: "ᚢ",
-    v: "ᚹ", w: "ᚹ", x: "ᛉ", y: "ᚣ", z: "ᛊ",
+    o: "ᚩ", p: "ᛈ", q: "ᚳ", r: "ᚱ", s: "ᛋ", t: "ᛏ", u: "ᚢ",
+    v: "ᚹ", w: "ᚹ", x: "ᛉ", y: "ᚣ", z: "ᛋ",
     "þ": "ᚦ", "ð": "ᚦ", "æ": "ᚫ", "œ": "ᛟ",
   },
 };
 const CONV_NOTES = {
   elder: "th becomes ᚦ, ng becomes ᛜ.",
-  youngerLong: "One rune covers several sounds: k and g share ᚴ, t and d share ᛏ, u, o and w share ᚢ.",
-  youngerShort: "One rune covers several sounds: k and g share ᚴ, t and d share ᛐ, u, o and w share ᚢ.",
+  youngerLong: "One rune covers several sounds: k and g share ᚴ, t and d share ᛏ, u and w share ᚢ, o is ᚬ \u00f3ss, and a word-final r is ᛦ \u00fdr.",
+  youngerShort: "One rune covers several sounds: k and g share ᚴ, t and d share ᛐ, u and w share ᚢ, o is ᚭ \u00f3ss, and a word-final r is ᛧ \u00fdr.",
   medieval: "Stung runes give one rune per sound: e is ᛂ, g is ᚵ, d is ᛑ, p is ᛔ.",
   futhorc: "Digraphs have their own runes: ea ᛠ, eo ᛇ, io ᛡ, ng ᛝ, st ᛥ, cw ᛢ.",
 };
@@ -283,9 +430,18 @@ function toRunes(text) {
   text = text.toLowerCase();
   let out = "";
   for (let i = 0; i < text.length;) {
+    const ch = text[i];
+    // Word-final r comes first: at the end of the string the "pair" below
+    // would be just "r", which would swallow it before this check runs.
+    if ((convSystem === "youngerLong" || convSystem === "youngerShort") && ch === "r") {
+      const next = text[i + 1];
+      const wordEnd = next === undefined || !/[a-z\u00fe\u00f0\u00e5\u00e6\u00f8]/.test(next);
+      if (wordEnd) { out += convSystem === "youngerLong" ? "\u16e6" : "\u16e7"; i += 1; continue; }
+    }
     const pair = text.slice(i, i + 2);
-    if (map[pair]) { out += map[pair]; i += 2; }
-    else { out += map[text[i]] || text[i]; i += 1; }
+    if (pair.length === 2 && map[pair]) { out += map[pair]; i += 2; continue; }
+    out += map[ch] || ch;
+    i += 1;
   }
   return out;
 }
@@ -311,28 +467,73 @@ document.getElementById("copy-runes").addEventListener("click", async () => {
   await navigator.clipboard.writeText(output.textContent);
 });
 
-// ---- Cast a rune ----
+// ---- Rune wheel: three rings, one rune from each aett ----
+// Reimplemented in original code from the rune-hours wheel idea: each
+// ring holds one family of eight Elder runes, the marker sits at the top,
+// and the middle ring spins the opposite way on a cast.
+const castWheel = document.getElementById("cast-wheel");
+const RING_RADII = [118, 80, 46];
+const rings = [];
+const ringRot = [0, 0, 0];
+const ringPick = [0, 0, 0];
+const picksBox = document.getElementById("picks");
+function showPicks() {
+  picksBox.textContent = "";
+  for (let k = 0; k < 3; k++) {
+    const r = RUNES[k * 8 + ringPick[k]];
+    const li = document.createElement("li");
+    const g = document.createElement("span");
+    g.className = "glyph";
+    g.textContent = r.glyph;
+    const n = document.createElement("strong");
+    n.textContent = " " + r.name + " ";
+    li.append(g, n, document.createTextNode("— " + r.meaning + ". Rules the " + fmtHour(k * 8 + ringPick[k]) + " hour."));
+    picksBox.appendChild(li);
+  }
+}
+function turnRing(k, i, spin) {
+  let target = -i * 45;
+  if (spin) {
+    if (k === 1) { while (target >= ringRot[k]) target -= 360; target -= 360; }
+    else { while (target <= ringRot[k]) target += 360; target += 360; }
+  } else {
+    while (target - ringRot[k] > 180) target -= 360;
+    while (target - ringRot[k] < -180) target += 360;
+  }
+  ringRot[k] = target;
+  rings[k].style.transform = "rotate(" + target + "deg)";
+  ringPick[k] = i;
+}
+for (let k = 0; k < 3; k++) {
+  const ring = document.createElement("div");
+  ring.className = "cast-ring";
+  for (let i = 0; i < 8; i++) {
+    const r = RUNES[k * 8 + i];
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "cast-rune-btn";
+    b.textContent = r.glyph;
+    b.setAttribute("aria-label", r.name);
+    const a = i * 45;
+    b.style.transform = "rotate(" + a + "deg) translateY(-" + RING_RADII[k] + "px) rotate(-" + a + "deg)";
+    b.addEventListener("click", () => { turnRing(k, i, false); showPicks(); });
+    ring.appendChild(b);
+  }
+  castWheel.appendChild(ring);
+  rings.push(ring);
+}
 const castBtn = document.getElementById("cast-btn");
-const castBox = document.getElementById("cast-result");
 castBtn.addEventListener("click", () => {
   castBtn.disabled = true;
-  castBox.textContent = "";
-  const glyph = document.createElement("span");
-  glyph.className = "glyph";
-  castBox.appendChild(glyph);
-  const shuffle = setInterval(() => {
-    glyph.textContent = RUNES[Math.floor(Math.random() * RUNES.length)].glyph;
-  }, 70);
-  setTimeout(() => {
-    clearInterval(shuffle);
-    const r = RUNES[Math.floor(Math.random() * RUNES.length)];
-    glyph.textContent = r.glyph;
-    const name = document.createElement("strong");
-    name.textContent = " " + r.name + " ";
-    castBox.append(name, document.createTextNode("— " + r.meaning + "."));
-    castBtn.disabled = false;
-  }, 700);
+  for (let k = 0; k < 3; k++) turnRing(k, Math.floor(Math.random() * 8), true);
+  setTimeout(() => { showPicks(); castBtn.disabled = false; }, 950);
 });
+document.getElementById("hour-turn-btn").addEventListener("click", () => {
+  const h = new Date().getHours();
+  turnRing(Math.floor(h / 8), h % 8, false);
+  showPicks();
+});
+showPicks();
 
 // ---- Code tabs ----
 document.querySelectorAll(".tab-btn").forEach((btn) => {

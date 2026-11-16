@@ -326,8 +326,54 @@ button:disabled { opacity: 0.6; cursor: wait; }
 .alpha-btn { background: var(--panel); color: var(--ink); border: 1px solid var(--border); }
 .alpha-btn.active { background: var(--purple); border-color: var(--purple); }
 .alpha-note { color: var(--muted); font-size: 0.92rem; }
-.sort-btn, .sys-btn { background: var(--panel); color: var(--ink); border: 1px solid var(--border); }
-.sort-btn.active, .sys-btn.active { background: var(--purple); border-color: var(--purple); }
+.sort-btn, .sys-btn, .hour-btn, .clock-btn { background: var(--panel); color: var(--ink); border: 1px solid var(--border); }
+.sort-btn.active, .sys-btn.active, .hour-btn.active, .clock-btn.active { background: var(--purple); border-color: var(--purple); }
 .sort-row { align-items: center; margin-top: 0.5rem; }
 .sort-label { color: var(--muted); font-size: 0.9rem; }
 .conv-note { color: var(--muted); font-size: 0.92rem; }
+
+/* ---- Revision 3: rune font stack, dials, wheel, lore ---- */
+.glyph, .rune-strip, .rune-output, .dial-label, .clock-slot, .cast-rune-btn, .hour-table td.glyph {
+  font-family: "Segoe UI Symbol", "Noto Sans Runic", "Noto Sans Symbols 2", "Junicode", "FreeSerif", sans-serif;
+}
+.dial-wrap { position: relative; width: 260px; height: 260px; margin: 1.2rem auto 0; }
+.dial { position: relative; width: 260px; height: 260px; border: 2px solid var(--border); border-radius: 50%; background: rgba(28, 19, 48, 0.75); }
+.wheel-slots { position: absolute; inset: 0; }
+.dial-label, .clock-slot { position: absolute; transform: translate(-50%, -50%); font-size: 1.15rem; line-height: 1; }
+.dial-label.night { color: var(--purple-light); }
+.dial-label.day { color: var(--gold); }
+.dial-label.now, .clock-slot.now { color: #fff; text-shadow: 0 0 10px var(--gold); font-size: 1.45rem; }
+.dial-hand { position: absolute; left: calc(50% - 1px); top: 6%; width: 2px; height: 44%; background: var(--gold); transform-origin: 50% 100%; }
+.dial-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+.dial-center .glyph { font-size: 2.6rem; color: var(--gold); line-height: 1.1; }
+#dial-clock { color: var(--ink); font-size: 0.95rem; }
+#dial-rune-name { color: var(--purple-light); font-weight: 600; }
+.dial-note, .credit-line { color: var(--muted); font-size: 0.9rem; margin: 0.6rem 0 0; }
+.clock-wheel { position: relative; width: 300px; height: 300px; margin: 1.2rem auto; border: 2px solid var(--border); border-radius: 50%; background: var(--panel); }
+.clock-wheel.dense .clock-slot { font-size: 0.95rem; }
+.clock-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 55%; }
+.clock-center .glyph { font-size: 2.6rem; color: var(--gold); line-height: 1.1; }
+#clock-name { font-weight: 700; }
+#clock-time { color: var(--muted); font-size: 0.9rem; }
+#clock-meaning { color: var(--muted); font-size: 0.85rem; }
+.clock-slot { color: var(--purple-light); }
+.cast-marker { text-align: center; color: var(--gold); font-size: 1.2rem; margin-bottom: 0.2rem; }
+.cast-wheel { position: relative; width: 280px; height: 280px; margin: 0 auto; }
+.cast-ring { position: absolute; border: 1px solid var(--border); border-radius: 50%; transition: transform 0.9s ease; }
+.cast-ring:nth-child(1) { inset: 0; }
+.cast-ring:nth-child(2) { inset: 43px; }
+.cast-ring:nth-child(3) { inset: 77px; }
+.cast-rune-btn { position: absolute; left: 50%; top: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; padding: 0; background: var(--panel); color: var(--purple-light); border: 1px solid var(--border); border-radius: 50%; font-size: 1.1rem; line-height: 1; }
+.cast-rune-btn:hover { background: var(--panel2); color: #fff; }
+.picks { list-style: none; padding: 0; display: grid; gap: 0.5rem; margin-top: 1rem; }
+.picks li { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 1rem; }
+.picks .glyph { font-size: 1.8rem; color: var(--gold); }
+.cast-msg { color: var(--muted); font-size: 0.92rem; }
+.birth-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
+.birth-row input { background: var(--panel); color: var(--ink); border: 1px solid var(--border); border-radius: 10px; padding: 0.6rem; font-size: 1rem; }
+.birth-out { margin-top: 0.8rem; padding: 1rem 1.3rem; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; font-size: 1.15rem; min-height: 2rem; }
+.birth-out .glyph { font-size: 2.2rem; color: var(--gold); }
+.lore-note { background: var(--panel); border: 1px solid var(--gold); border-radius: 12px; padding: 1rem 1.3rem; margin: 1rem 0; }
+#lore ul li { margin-bottom: 0.6rem; }
+button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+@media (max-width: 380px) { .clock-wheel { width: 260px; height: 260px; } .cast-wheel { width: 260px; height: 260px; } }

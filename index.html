@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Connie ✦ smallrug2 — Witch, Rune Writer, White-Hat Hacker</title>
-<meta name="description" content="smallrug2 — Connie, a trans witch, Elder Futhark rune writer, ethical hacker and builder. Runes, code, projects and links.">
+<meta name="description" content="smallrug2 — Connie, a trans witch, Elder Futhark rune writer, ethical hacker and builder. Runes, lore, code, projects and links.">
 <!-- Bump ?v= on the CSS/JS links with every deploy, so visitors never get a mixed old/new page from cache. -->
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 <div id="float-runes" aria-hidden="true"></div>
@@ -14,6 +14,7 @@
   <button class="brand nav-btn active" data-view-target="home" type="button">ᚱ smallrug2</button>
   <div class="nav-links">
     <button class="nav-btn" data-view-target="runes" type="button">Runes</button>
+    <button class="nav-btn" data-view-target="lore" type="button">Lore</button>
     <button class="nav-btn" data-view-target="code" type="button">Code</button>
     <button class="nav-btn" data-view-target="projects" type="button">Projects</button>
     <button class="nav-btn" data-view-target="links" type="button">Links</button>
@@ -28,6 +29,19 @@
   <p class="status">“just a cute little witch”</p>
   <p class="rune-strip" aria-hidden="true">ᚨ ᛒ ᚲ ᛞ ᛖ ᚠ ᚷ ᚺ ᛁ ᛃ ᚲ ᛚ ᛗ ᚾ ᛟ ᛈ ᚲ ᚱ ᛊ ᛏ ᚢ ᚹ ᚹ ᚲᛊ ᛃ ᛉ</p>
   <p class="strip-caption">A to Z, written in runes</p>
+  <div class="dial-wrap">
+    <div id="hero-dial" class="dial">
+      <div id="dial-hand" class="dial-hand"></div>
+      <div id="dial-slots" class="wheel-slots"></div>
+    </div>
+    <div class="dial-center">
+      <span id="dial-glyph" class="glyph"></span>
+      <span id="dial-clock"></span>
+      <span id="dial-rune-name"></span>
+    </div>
+  </div>
+  <p class="dial-note">The dial shows your local time and the Elder Futhark rune of this hour — gold for the day hours, violet for the night.</p>
+  <p class="credit-line">Welcome dial inspired by <a href="https://github.com/lytrawroper-lang/rune-hours">lytrawroper-lang's rune-hours</a>.</p>
 </header>
 
 <main>
@@ -77,7 +91,7 @@
   The rune-hours idea was inspired by
   <a href="https://github.com/lytrawroper-lang/rune-hours">lytrawroper-lang's rune-hours</a> —
   thank you for the spark. This version is my own build, with every alphabet checked against
-  the rune poems, the manuscript orders, and the Valhyr rune converter I learned from.</p>
+  the rune poems, the manuscript orders, and the Valhyr rune converter I learned from. The welcome dial, the clock wheel, and the rune wheel below were also inspired by that site, and are credited where they appear.</p>
 
   <h3>The alphabets</h3>
   <div class="tabs">
@@ -94,9 +108,32 @@
     <button class="sort-btn active" data-sort="az" type="button">A–Z by name</button>
   </div>
   <p id="alpha-note" class="alpha-note"></p>
+  <p id="alpha-lore" class="alpha-note"></p>
   <div id="rune-grid" class="rune-grid"></div>
 
   <h3>Rune of the hour</h3>
+  <p>The clock below runs on <em>your</em> time — whoever visits this page sees their own local hour and its rune. Switch the rune row, or switch between 12-hour and 24-hour time.</p>
+  <div class="tabs">
+    <button class="hour-btn active" data-hour-system="elder" type="button">Elder Futhark</button>
+    <button class="hour-btn" data-hour-system="youngerLong" type="button">Younger, long-branch</button>
+    <button class="hour-btn" data-hour-system="youngerShort" type="button">Younger, short-twig</button>
+    <button class="hour-btn" data-hour-system="medieval" type="button">Medieval</button>
+    <button class="hour-btn" data-hour-system="futhorc" type="button">Anglo-Saxon Futhorc</button>
+  </div>
+  <div class="tabs sort-row">
+    <span class="sort-label">Clock:</span>
+    <button class="clock-btn active" data-clock-mode="12" type="button">12-hour</button>
+    <button class="clock-btn" data-clock-mode="24" type="button">24-hour</button>
+  </div>
+  <div id="clock-wheel" class="clock-wheel">
+    <div id="clock-slots" class="wheel-slots"></div>
+    <div class="clock-center">
+      <span id="clock-glyph" class="glyph"></span>
+      <span id="clock-name"></span>
+      <span id="clock-time"></span>
+      <span id="clock-meaning"></span>
+    </div>
+  </div>
   <div id="hour-rune" class="hour-rune"></div>
   <div id="hour-table-wrap">
     <table id="hour-table" class="hour-table">
@@ -104,6 +141,14 @@
       <tbody></tbody>
     </table>
   </div>
+
+  <h3>Rune of a birth hour</h3>
+  <p>Pick any hour of the day and see which Elder Futhark rune rules it.</p>
+  <div class="birth-row">
+    <input id="birth-time" type="time" aria-label="Birth hour">
+    <button id="birth-btn" type="button">Find my birth-hour rune</button>
+  </div>
+  <div id="birth-out" class="birth-out" aria-live="polite"></div>
 
   <h3>Write in runes</h3>
   <p>Type anything and watch it become runes. Pick a system — the same text converts differently in each row. Staveless Hälsinge has no Unicode characters, so it can't be typed; see its tab above.</p>
@@ -119,10 +164,14 @@
   <div id="rune-output" class="rune-output" aria-live="polite"></div>
   <button id="copy-runes" type="button">Copy runes</button>
 
-  <h3>Cast a rune</h3>
-  <p>One rune, drawn at random, with its meaning. Take from it what you will.</p>
-  <button id="cast-btn" type="button">ᚱ Cast a rune</button>
-  <div id="cast-result" class="cast-result" aria-live="polite"></div>
+  <h3>Rune wheel</h3>
+  <p>Three rings, one for each family of eight runes. Tap a rune to turn its ring to the marker, or cast all three at once. The wheel is inspired by <a href="https://github.com/lytrawroper-lang/rune-hours">lytrawroper-lang's rune-hours</a> — this version is my own build.</p>
+  <div class="cast-marker" aria-hidden="true">▼</div>
+  <div id="cast-wheel" class="cast-wheel"></div>
+  <ul id="picks" class="picks" aria-live="polite"></ul>
+  <button id="cast-btn" type="button">ᚱ Cast the runes</button>
+  <button id="hour-turn-btn" type="button">Turn to this hour's rune</button>
+  <p id="cast-msg" class="cast-msg">One rune from each ætt — take from them what you will.</p>
 
   <h3>Rune reflection of the day</h3>
   <p>One rune, one question, changing daily. Written for this site — sit with it a while.</p>
@@ -134,6 +183,64 @@
     <p>My favorite rune book, and the one I use most. It teaches the runes as a way to understand yourself and your life: where they come from, how to read and write them, how to make your own set, how to build runescripts and bindrunes, and how to consult them for advice and inspiration. If the runes on this page interest you, start here.</p>
     <p><a href="https://books.google.cm/books?id=A_gzAQAACAAJ&amp;hl=fr&amp;source=gbs_book_other_versions_r&amp;cad=3">Find Rune Power on Google Books</a> · ISBN 9780785814894</p>
   </div>
+</section>
+
+<section id="lore" class="view" data-view="lore">
+  <h2>ᛗ Lore</h2>
+  <p>Real history, checked against the stones, the manuscripts, and what scholars actually agree on. Where the evidence is thin or scholars disagree, this page says so. Stories from the old poems are marked as stories — they matter, but they are not the same kind of evidence as a carved stone.</p>
+  <div class="lore-note">
+    <p><strong>How to read this page.</strong> Dates below are approximate — the old world did not keep our calendar. “Around 400 AD” means the experts place it near then, not on a birthday. If anything here turns out to be wrong, I want to know: this page is meant to be checked, not believed.</p>
+  </div>
+
+  <h3>Where the runes came from</h3>
+  <p>The runes are the writing of the Germanic peoples — not an invention of the Vikings, who came centuries later. The oldest inscriptions we can date securely come from around 150 AD. The most famous is a small antler comb from a bog at Vimose, on the Danish island of Funen, carved with five runes that read <em>harja</em> — probably a name. A stone found at Svingerud in Norway, from graves dated between about 50 BC and 275 AD, may be older; the argument is still open.</p>
+  <p>Nobody knows exactly who invented the runes or where. The strongest explanation is that Germanic speakers adapted them from a Mediterranean alphabet — most likely an Old Italic or Latin one — through contact with the Roman world. The alphabet itself was rearranged into its own order, starting with the sounds f, u, th, a, r, k, which is why it is called the futhark, not an alphabet.</p>
+  <p>The oldest complete row of all 24 Elder Futhark runes is on the Kylver stone, a grave slab from Gotland in Sweden, carved around 400 AD. The 24 runes fall into three families of eight, called ættir. The names we use today — Fehu, Uruz, Thurisaz — are reconstructed from later rune poems and related languages, because no rune poem survives from the Elder period itself. Most early inscriptions are short: names, maker’s marks, short formulas, carved on brooches, weapons, combs, and gold pendants.</p>
+  <p>The old poems tell a different kind of origin story. In Hávamál, one of the poems of the Poetic Edda, Odin hangs on the World Tree for nine nights, pierced by his own spear, and comes back with the runes. That is a story, told centuries after the first carvings — it tells us what the runes meant to the people who told it, not how the alphabet was invented. Both layers matter, and they should not be confused.</p>
+
+  <h3>The Viking Age</h3>
+  <p>Historians usually date the Viking Age from the raid on the monastery at Lindisfarne, off the north-east coast of England, on 8 June 793, to the Battle of Stamford Bridge in 1066, where the Norwegian king Harald Hardrada was killed by the English king Harold Godwinson. Those are conventional bookends, not hard borders: ship burials at Salme in Estonia, from around 750, show Scandinavians sailing east with weapons decades before Lindisfarne, and scholars argue over the start date.</p>
+  <p>“Viking” was an activity before it was a label for a people — going viking meant going raiding or trading overseas. Most Scandinavians of the age were farmers, traders, craftspeople, and settlers. They founded towns, traded from Ireland to Central Asia, settled Iceland, Greenland, and parts of Britain and France, and reached North America: at L’Anse aux Meadows in Newfoundland, Norse-cut wood has been tree-ring dated to exactly 1021, using a spike in carbon-14 from a solar storm in 993 as a marker. It is the only confirmed Norse site in North America.</p>
+  <p>Most of what we know about the old religion comes from much later writing: the sagas and the Eddas, recorded in Iceland in the 12th and 13th centuries by Christian writers, working from older oral poetry. Snorri Sturluson’s Prose Edda dates to around 1220; the poems of the Poetic Edda were collected around 1270. Archaeology — graves, settlements, runestones — fills in what the books leave out, and sometimes corrects them.</p>
+
+  <h3>The runes of the Viking Age</h3>
+  <p>Around 800 AD, the 24 Elder runes were cut to 16 — the Younger Futhark — even as the Old Norse language was gaining sounds. One rune now had to cover several sounds: the same rune could stand for k and g, or t and d. The row was carved in two main styles: long-branch, with full-length strokes, the Danish style; and short-twig, with shortened strokes, the Swedish-Norwegian style. The same 16 names and order underlie both.</p>
+  <p>Two stones anchor the age. The Rök stone in Östergötland, Sweden, carved in the early 800s, carries the longest known runic inscription — around 760 runes — raised by a father, Varin, for his dead son. Much of it is riddles and ciphers, and scholars still argue over what it means. The great Jelling stone in Denmark, raised by Harald Bluetooth around 965, says Harald won Denmark and Norway and made the Danes Christian; it carries the oldest image of Christ in Scandinavia and the first use of the name “Denmark” on Danish soil. Jelling has been a UNESCO World Heritage site since 1994.</p>
+  <p>About 3,000 runestones survive in Scandinavia, most of them Swedish and most raised in the 1000s, around the conversion to Christianity. They are as much a Christian phenomenon as a pagan one: many carry crosses and prayers such as “God help his soul.” Runestones were public monuments — memorials, inheritance claims, records of journeys — not secret magical objects.</p>
+
+  <h3>Runes in everyday life</h3>
+  <p>Runes were everyday writing, not only monuments. After a fire in Bergen in 1955, archaeologists at Bryggen, the old harbor, found around 670 runic inscriptions on wood and bone, mostly from the 12th to 14th centuries: merchants’ tags, business letters, prayers, love messages, poetry, and rude jokes. Runes turn up in medieval churches, on bells and fonts, often spelling Latin prayers.</p>
+  <p>As the centuries passed, the row grew again. Medieval carvers added stung — dotted — runes, so nearly one rune stood for one sound. The Codex Runicus, a vellum manuscript from around 1300 containing the Scanian Law, is written entirely in runes. Local runes survived longest in Dalarna, Sweden, where they were written on furniture and tools into the twentieth century.</p>
+
+  <h3>What paganism is</h3>
+  <p>“Paganism” is an umbrella word, not one religion. It comes from the Latin <em>paganus</em>, a country dweller — the word Christians used for people who kept the old ways outside the towns. The old Norse religion had no single holy book, no single creed, and no central church. What it had was practice: offerings and feasts (blót), toasts and oaths, care for the dead, respect for the land and its unseen inhabitants, and stories about gods who were powerful but not all-powerful — Odin, Thor, Freyja, Freyr, and many more, alongside ancestors and land spirits.</p>
+  <p>Practice varied by place and household. A farmer in Iceland, a king in Denmark, and a trader in Sweden did not all believe or worship in the same way, and the religion changed over the centuries it was lived. Anyone who tells you there was one fixed “Viking religion” with one set of rules is selling you a modern invention.</p>
+
+  <h3>How the old ways became modern paganism</h3>
+  <p>Scandinavia became Christian over centuries, not overnight, and not everywhere at once. In Norway, the kings Olaf Tryggvason (995–1000) and Olaf Haraldsson, later Saint Olaf, pushed conversion, sometimes by force. In Iceland, the Althing — the national assembly — voted in the year 1000 to adopt Christianity as the law of the land. The lawspeaker Thorgeir Thorkelsson, himself a pagan, ruled for “one law and one religion,” with temporary concessions for private pagan practice. Even so, historians say it took over a hundred years for most Icelanders to become Christian in daily life. Sweden converted more slowly, into the 1100s.</p>
+  <p>The old stories survived because Icelanders wrote them down. In the 1800s, Romantic artists and writers across Europe fell in love with the Viking past and invented much of the image we still carry — including the horned helmet. Real, organized modern paganism came later. In Iceland, a small group led by the farmer and poet Sveinbjörn Beinteinsson founded Ásatrúarfélagið, the Ásatrú Fellowship, on the First Day of Summer in 1972 at the Hótel Borg in Reykjavík. The Icelandic government recognized it as a religious organization in May 1973, with the right to perform legal marriages and a share of the church tax.</p>
+  <p>Modern pagan paths today range from reconstructionist Heathenry and Ásatrú, which try to rebuild the old practice from the sources as faithfully as possible, to eclectic paths that weave the old gods together with other traditions. Modern paganism is a revival and a new creation, built from old sources — not an unbroken line from the Viking Age. Saying so honestly is part of honoring the past, not a weakness in the present.</p>
+
+  <h3>Myths that are not true</h3>
+  <ul>
+    <li><strong>Horned helmets.</strong> No Viking Age helmet with horns has ever been found. The one near-complete Viking Age helmet, from Gjermundbu in Norway, is a plain rounded iron cap with a guard around the eyes and nose. The horned image comes from 19th-century art and stage costumes — above all Carl Emil Doepler’s costumes for Wagner’s Ring cycle in 1876. The famous horned helmets from Viksø in Denmark are Bronze Age, from around 900 BC, and ceremonial — over a thousand years before the Vikings.</li>
+    <li><strong>Vikings only raided.</strong> Raiding was real, and brutal. So were farming, trading, law-making, poetry, and settling new lands. The same people did all of it.</li>
+    <li><strong>Runes are only magic.</strong> Runes were used for charms and spells — and for name tags, shopping lists, love notes, and law books. They were an alphabet first.</li>
+    <li><strong>All runestones are pagan.</strong> Most were raised around the conversion, and many are openly Christian, crosses and all.</li>
+    <li><strong>The Viking Age has exact start and end dates.</strong> 793 and 1066 are useful markers. Real history fades in and out at the edges.</li>
+  </ul>
+
+  <h3>My path</h3>
+  <p>My own path is Eclectic Norse Paganism: the Norse gods alongside Archangel Michael and the angels, runes and galdr alongside modern witchcraft, personal sovereignty over mimicking the old customs. It is my practice, built deliberately — not a claim about what every pagan believes, and not a reconstruction of what a Viking would have done. The history above is the ground I stand on; the practice is my own.</p>
+
+  <h3>Keep reading</h3>
+  <ul class="link-list">
+    <li><a href="https://en.wikipedia.org/wiki/Runic_alphabets">Runic alphabets — Wikipedia</a></li>
+    <li><a href="https://www.viking.no/who-were-the-vikings/runes/rune-stones/">Rune stones — viking.no</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Christianization_of_Iceland">Christianization of Iceland — Wikipedia</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/%C3%81satr%C3%BAarf%C3%A9lagi%C3%B0">Ásatrúarfélagið — Wikipedia</a></li>
+    <li><a href="https://valhyr.com/pages/rune-converter">Rune converter — Valhyr</a></li>
+  </ul>
 </section>
 
 <section id="code" class="view" data-view="code">
@@ -296,13 +403,13 @@ public class RuneConverter {
 </main>
 
 <footer>
-  <p>Site by <strong>smallrug2</strong> · Rune-hours idea inspired by
-  <a href="https://github.com/lytrawroper-lang/rune-hours">lytrawroper-lang's rune-hours</a> ·
+  <p>Site by <strong>smallrug2</strong> · Welcome dial, clock wheel, and rune wheel inspired by
+  <a href="https://github.com/lytrawroper-lang/rune-hours">lytrawroper-lang's rune-hours</a>, reimplemented here as my own build ·
   Built with <strong>Spark</strong>, a Muse personal agent.</p>
   <p>HTML, CSS &amp; JavaScript · Hosted on GitHub Pages · ᚠᚢᚦᚨᚱᚲ</p>
   <p>No trackers, no visitor logging — this site collects nothing about you.</p>
 </footer>
 
-<script src="script.js?v=2"></script>
+<script src="script.js?v=3"></script>
 </body>
 </html>
