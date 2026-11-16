@@ -36,6 +36,6 @@ public class RuneConverter {
     }
 
     public static void main(String[] args) {
-        System.out.println(toRunes("connie"));  // ᚲᛟᚾᚾᛁᛖ
+        System.out.println(toRunes("smallrug"));  // ᛊᛗᚨᛚᛚᚱᚢᚷ
     }
 }

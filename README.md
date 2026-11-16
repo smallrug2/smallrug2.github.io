@@ -2,7 +2,7 @@
 
 Live at **https://smallrug2.github.io/** (GitHub Pages).
 
-Connie — trans witch, Elder Futhark rune writer, white-hat hacker and builder.
+smallrug — trans witch, Elder Futhark rune writer, white-hat hacker and builder.
 Bio, a full Elder Futhark dictionary, rune of the hour, a rune converter, a rune
 cast, code samples in Python / C++ / Java / HTML / CSS, projects, and links.
 

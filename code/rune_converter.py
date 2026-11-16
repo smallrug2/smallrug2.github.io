@@ -27,5 +27,5 @@ def to_runes(text):
 
 
 if __name__ == "__main__":
-    print(to_runes("connie"))  # ᚲᛟᚾᚾᛁᛖ
+    print(to_runes("smallrug"))  # ᛊᛗᚨᛚᛚᚱᚢᚷ
     print(to_runes("strength and honor"))  # ᛊᛏᚱᛖᛜᚷᚦ ᚨᚾᛞ ᚺᛟᚾᛟᚱ

@@ -696,7 +696,7 @@ for (let i = 0; i < 14; i++) {
 // ---- Decorative Kali terminal (types itself, runs nothing) ----
 const termLines = [
   "$ whoami",
-  "connie — witch · rune writer · white-hat",
+  "smallrug — witch · rune writer · white-hat",
   "$ cat ~/runes.txt",
   "ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ",
   "$ ./cast-rune.sh",

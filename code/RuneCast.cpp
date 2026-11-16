@@ -30,6 +30,6 @@ std::string toRunes(const std::string& text) {
 }
 
 int main() {
-    std::cout << toRunes("connie") << "\n";  // ᚲᛟᚾᚾᛁᛖ
+    std::cout << toRunes("smallrug") << "\n";  // ᛊᛗᚨᛚᛚᚱᚢᚷ
     return 0;
 }
