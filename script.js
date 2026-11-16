@@ -205,8 +205,78 @@ document.querySelectorAll(".sort-btn").forEach((btn) => {
 renderAlphabet();
 
 // ---- Rune of the hour: five systems, 12/24-hour clock, dials ----
-// Times always come from the visitor's own clock (new Date() runs in
-// their browser), so the hour rune follows whoever is looking at the page.
+// The hours follow the sun, after the system on lytrawroper-lang's
+// rune-hours site: the 12 day runes share sunrise-to-sunset and the
+// 12 night runes share sunset-to-sunrise, so the hours grow and
+// shrink with the seasons. One shared place (Los Angeles, the place
+// set on rune-hours) keeps every visitor on the same schedule, and
+// the clock itself is each visitor's own device time (new Date()
+// runs in their browser), so everyone sees the same rune at the same
+// moment, in their own local time.
+// The hour order follows the rune-hours tables: Perthro closes the
+// night and Eihwaz opens the day, and Othala comes before Dagaz.
+// The dictionary above keeps the usual order; only the hours use
+// this order, exactly as rune-hours does.
+const HOUR_ORDER = [12, 14, 15, 16, 17, 18, 19, 20, 21, 23, 22, 0,
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13];
+const DAY_RUNES = new Set(HOUR_ORDER.slice(0, 12));
+const SUN_PLACE = { name: "Los Angeles", lat: 34.05, lon: -118.24 };
+// Sunrise and sunset in minutes of the visitor's local day, from the
+// standard solar-position approximation: Julian day, solar mean
+// anomaly, equation of center, solar transit, and the hour angle at
+// a -0.833 degree zenith. Written here from the astronomy.
+function sunTimesFor(date) {
+  const rad = Math.PI / 180;
+  const noon = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0);
+  const dayNo = Math.round(noon.getTime() / 86400000 + 2440587.5 - 2451545 + SUN_PLACE.lon / 360);
+  const julian = dayNo - SUN_PLACE.lon / 360;
+  const anomalyDeg = (357.5291 + 0.98560028 * julian) % 360;
+  const anomaly = anomalyDeg * rad;
+  const center = 1.9148 * Math.sin(anomaly) + 0.02 * Math.sin(2 * anomaly) + 0.0003 * Math.sin(3 * anomaly);
+  const ecliptic = ((anomalyDeg + center + 180 + 102.9372) % 360) * rad;
+  const transit = 2451545 + julian + 0.0053 * Math.sin(anomaly) - 0.0069 * Math.sin(2 * ecliptic);
+  const sinDec = Math.sin(ecliptic) * Math.sin(23.4397 * rad);
+  const cosDec = Math.cos(Math.asin(sinDec));
+  const cosHour = (Math.sin(-0.833 * rad) - Math.sin(SUN_PLACE.lat * rad) * sinDec) / (Math.cos(SUN_PLACE.lat * rad) * cosDec);
+  if (cosHour < -1 || cosHour > 1) return null;
+  const halfDay = Math.acos(cosHour) / rad / 360;
+  const toMinutes = (j) => { const t = new Date((j - 2440587.5) * 86400000); return t.getHours() * 60 + t.getMinutes(); };
+  return { rise: toMinutes(transit - halfDay), set: toMinutes(transit + halfDay) };
+}
+// The 24 slots for one local day: 12 day slots from sunrise, then 12
+// night slots from sunset. Night ends past midnight run past 1440 so
+// one comparison finds the slot; display wraps them back into the day.
+let slotDay = "";
+let slots = [];
+let sunToday = { rise: 360, set: 1080 };
+function buildSlots(date) {
+  const key = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+  if (key === slotDay) return;
+  slotDay = key;
+  const st = sunTimesFor(date);
+  const rise = st ? st.rise : 360;
+  const set = st ? st.set : 1080;
+  sunToday = { rise, set };
+  const dayLen = ((set - rise) % 1440 + 1440) % 1440;
+  const nightLen = 1440 - dayLen;
+  slots = [];
+  for (let i = 0; i < 12; i++) slots.push({ start: rise + dayLen * i / 12, end: rise + dayLen * (i + 1) / 12 });
+  for (let i = 0; i < 12; i++) slots.push({ start: set + nightLen * i / 12, end: set + nightLen * (i + 1) / 12 });
+}
+function slotIndexAt(date) {
+  buildSlots(date);
+  let m = date.getHours() * 60 + date.getMinutes() + date.getSeconds() / 60;
+  if (m < sunToday.rise) m += 1440;
+  for (let k = 0; k < 24; k++) if (m >= slots[k].start && m < slots[k].end) return k;
+  return 23;
+}
+function slotIndexAtMinutes(minutes) {
+  buildSlots(new Date());
+  let m = minutes;
+  if (m < sunToday.rise) m += 1440;
+  for (let k = 0; k < 24; k++) if (m >= slots[k].start && m < slots[k].end) return k;
+  return 23;
+}
 const HOUR_ROWS = {
   elder: RUNES,
   youngerLong: YOUNGER.map((r) => ({ glyph: r.long, name: r.name, meaning: r.meaning })),
@@ -224,12 +294,16 @@ const HOUR_SYSTEM_NAMES = {
 let hourSystem = "elder";
 let clockMode = "12";
 const now = new Date();
-function fmtHour(h) {
-  if (clockMode === "24") return String(h).padStart(2, "0") + ":00";
+function fmtMinutes(m) {
+  m = ((Math.round(m) % 1440) + 1440) % 1440;
+  const h = Math.floor(m / 60);
+  const mm = String(m % 60).padStart(2, "0");
+  if (clockMode === "24") return String(h).padStart(2, "0") + ":" + mm;
   const ap = h < 12 ? "AM" : "PM";
   const h12 = h % 12 === 0 ? 12 : h % 12;
-  return h12 + ":00 " + ap;
+  return h12 + ":" + mm + " " + ap;
 }
+function fmtRange(k) { return fmtMinutes(slots[k].start) + " \u2013 " + fmtMinutes(slots[k].end); }
 function fmtTime(d) {
   const s = String(d.getSeconds()).padStart(2, "0");
   const m = String(d.getMinutes()).padStart(2, "0");
@@ -238,7 +312,7 @@ function fmtTime(d) {
   const h12 = d.getHours() % 12 === 0 ? 12 : d.getHours() % 12;
   return h12 + ":" + m + ":" + s + " " + ap;
 }
-function hourRuneFor(row, h) { return row[h % row.length]; }
+function hourRuneFor(row, k) { return hourSystem === "elder" ? RUNES[HOUR_ORDER[k]] : row[k % row.length]; }
 function placeOnCircle(el, i, total, radiusPct) {
   const angle = (i / total) * Math.PI * 2 - Math.PI / 2;
   el.style.left = 50 + radiusPct * Math.cos(angle) + "%";
@@ -246,12 +320,13 @@ function placeOnCircle(el, i, total, radiusPct) {
 }
 
 // Hero welcome dial: the 24 Elder runes around a clock face, midnight at
-// the top, gold for day hours (6-17), violet for night hours.
+// the top, gold for the runes that rule the daylight, violet for the
+// runes that rule the night.
 const dialSlots = document.getElementById("dial-slots");
 const dialLabels = [];
 RUNES.forEach((r, i) => {
   const s = document.createElement("span");
-  s.className = "dial-label" + ((i >= 6 && i < 18) ? " day" : " night");
+  s.className = "dial-label" + (DAY_RUNES.has(i) ? " day" : " night");
   s.textContent = r.glyph;
   placeOnCircle(s, i, 24, 44);
   dialSlots.appendChild(s);
@@ -278,6 +353,7 @@ function buildClockWheel() {
 }
 
 const hourBox = document.getElementById("hour-rune");
+const sunLine = document.getElementById("sun-line");
 const tbody = document.querySelector("#hour-table tbody");
 const clockGlyph = document.getElementById("clock-glyph");
 const clockName = document.getElementById("clock-name");
@@ -287,26 +363,29 @@ const dialGlyph = document.getElementById("dial-glyph");
 const dialClock = document.getElementById("dial-clock");
 const dialName = document.getElementById("dial-rune-name");
 const dialHand = document.getElementById("dial-hand");
-let lastHour = -1;
+let lastSlot = -1;
+let lastDay = "";
 function renderHour() {
   const d = new Date();
-  const h = d.getHours();
+  buildSlots(d);
+  const k = slotIndexAt(d);
   const row = HOUR_ROWS[hourSystem];
-  const r = hourRuneFor(row, h);
-  const elderRune = RUNES[h];
-  hourBox.textContent = "Right now, " + fmtHour(h) + " belongs to ";
+  const r = hourRuneFor(row, k);
+  const elderRune = RUNES[HOUR_ORDER[k]];
+  hourBox.textContent = "Right now, " + fmtRange(k) + " belongs to ";
   const g = document.createElement("span");
   g.className = "glyph";
   g.textContent = r.glyph;
   const n = document.createElement("strong");
   n.textContent = " " + r.name + " ";
   hourBox.append(g, n, document.createTextNode("— " + r.meaning + " (" + HOUR_SYSTEM_NAMES[hourSystem] + ")."));
+  sunLine.textContent = "Today the sun rises " + fmtMinutes(sunToday.rise) + " and sets " + fmtMinutes(sunToday.set) + " in " + SUN_PLACE.name + " — the day runes share the daylight and the night runes share the dark, the same schedule as rune-hours, shown in your time.";
   tbody.textContent = "";
   for (let i = 0; i < 24; i++) {
     const rr = hourRuneFor(row, i);
     const tr = document.createElement("tr");
-    if (i === h) tr.className = "now";
-    [fmtHour(i), rr.glyph, rr.name, rr.meaning].forEach((text, j) => {
+    if (i === k) tr.className = "now";
+    [fmtRange(i), rr.glyph, rr.name, rr.meaning].forEach((text, j) => {
       const td = document.createElement("td");
       if (j === 1) td.className = "glyph";
       td.textContent = text;
@@ -317,11 +396,12 @@ function renderHour() {
   clockGlyph.textContent = r.glyph;
   clockName.textContent = r.name;
   clockMeaning.textContent = r.meaning;
-  clockSlots.forEach((s, i) => s.classList.toggle("now", i === h % row.length));
+  clockSlots.forEach((s, i) => s.classList.toggle("now", i === k % row.length));
   dialGlyph.textContent = elderRune.glyph;
   dialName.textContent = elderRune.name;
-  dialLabels.forEach((s, i) => s.classList.toggle("now", i === h));
-  lastHour = h;
+  dialLabels.forEach((s, i) => s.classList.toggle("now", i === HOUR_ORDER[k]));
+  lastSlot = k;
+  lastDay = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
 }
 function tickClock() {
   const d = new Date();
@@ -329,7 +409,8 @@ function tickClock() {
   dialClock.textContent = fmtTime(d);
   const deg = (d.getHours() % 24) * 15 + d.getMinutes() * 0.25;
   dialHand.style.transform = "rotate(" + deg + "deg)";
-  if (d.getHours() !== lastHour) renderHour();
+  const key = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+  if (key !== lastDay || slotIndexAt(d) !== lastSlot) renderHour();
 }
 buildClockWheel();
 renderHour();
@@ -360,15 +441,17 @@ document.getElementById("birth-btn").addEventListener("click", () => {
   const birthOut = document.getElementById("birth-out");
   const val = document.getElementById("birth-time").value;
   if (!val) { birthOut.textContent = "Pick a time first — any hour of the day."; return; }
-  const h = parseInt(val.split(":")[0], 10);
-  const r = RUNES[h];
+  const parts = val.split(":");
+  const mins = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+  const k = slotIndexAtMinutes(mins);
+  const r = RUNES[HOUR_ORDER[k]];
   birthOut.textContent = "";
   const g = document.createElement("span");
   g.className = "glyph";
   g.textContent = r.glyph;
   const n = document.createElement("strong");
   n.textContent = " " + r.name + " ";
-  birthOut.append(document.createTextNode("Born at " + fmtHour(h) + ": "), g, n, document.createTextNode("— " + r.meaning + "."));
+  birthOut.append(document.createTextNode("Born at " + fmtMinutes(mins) + ": "), g, n, document.createTextNode("— " + r.meaning + ". That slot runs " + fmtRange(k) + " by today's sun."));
 });
 
 // ---- Rune converter: five systems, one text box ----
@@ -487,7 +570,7 @@ function showPicks() {
     g.textContent = r.glyph;
     const n = document.createElement("strong");
     n.textContent = " " + r.name + " ";
-    li.append(g, n, document.createTextNode("— " + r.meaning + ". Rules the " + fmtHour(k * 8 + ringPick[k]) + " hour."));
+    li.append(g, n, document.createTextNode("— " + r.meaning + ". Rules " + fmtRange(HOUR_ORDER.indexOf(k * 8 + ringPick[k])) + " today."));
     picksBox.appendChild(li);
   }
 }
@@ -529,8 +612,8 @@ castBtn.addEventListener("click", () => {
   setTimeout(() => { showPicks(); castBtn.disabled = false; }, 950);
 });
 document.getElementById("hour-turn-btn").addEventListener("click", () => {
-  const h = new Date().getHours();
-  turnRing(Math.floor(h / 8), h % 8, false);
+  const j = HOUR_ORDER[slotIndexAt(new Date())];
+  turnRing(Math.floor(j / 8), j % 8, false);
   showPicks();
 });
 showPicks();

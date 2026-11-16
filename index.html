@@ -6,7 +6,7 @@
 <title>Connie ✦ smallrug2 — Witch, Rune Writer, White-Hat Hacker</title>
 <meta name="description" content="smallrug2 — Connie, a trans witch, Elder Futhark rune writer, ethical hacker and builder. Runes, lore, code, projects and links.">
 <!-- Bump ?v= on the CSS/JS links with every deploy, so visitors never get a mixed old/new page from cache. -->
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 <div id="float-runes" aria-hidden="true"></div>
@@ -112,7 +112,7 @@
   <div id="rune-grid" class="rune-grid"></div>
 
   <h3>Rune of the hour</h3>
-  <p>The clock below runs on <em>your</em> time — whoever visits this page sees their own local hour and its rune. Switch the rune row, or switch between 12-hour and 24-hour time.</p>
+  <p>The hours below follow the sun, after the system on lytrawroper-lang's rune-hours: the 12 day runes share sunrise to sunset and the 12 night runes share the rest, so the hours grow and shrink with the seasons. The clock runs on <em>your</em> time — whoever visits sees their own local clock — and everyone shares the same sunrise and sunset, so everyone sees the same rune at the same moment. Switch the rune row, or switch between 12-hour and 24-hour time.</p>
   <div class="tabs">
     <button class="hour-btn active" data-hour-system="elder" type="button">Elder Futhark</button>
     <button class="hour-btn" data-hour-system="youngerLong" type="button">Younger, long-branch</button>
@@ -135,15 +135,16 @@
     </div>
   </div>
   <div id="hour-rune" class="hour-rune"></div>
+  <p id="sun-line" class="alpha-note"></p>
   <div id="hour-table-wrap">
     <table id="hour-table" class="hour-table">
-      <thead><tr><th>Hour</th><th>Rune</th><th>Name</th><th>Meaning</th></tr></thead>
+      <thead><tr><th>Time</th><th>Rune</th><th>Name</th><th>Meaning</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
 
   <h3>Rune of a birth hour</h3>
-  <p>Pick any hour of the day and see which Elder Futhark rune rules it.</p>
+  <p>Pick any time of day and see which Elder Futhark rune rules it, by today's sunrise and sunset.</p>
   <div class="birth-row">
     <input id="birth-time" type="time" aria-label="Birth hour">
     <button id="birth-btn" type="button">Find my birth-hour rune</button>
@@ -410,6 +411,6 @@ public class RuneConverter {
   <p>No trackers, no visitor logging — this site collects nothing about you.</p>
 </footer>
 
-<script src="script.js?v=3"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>
